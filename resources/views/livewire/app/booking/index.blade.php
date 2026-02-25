@@ -51,7 +51,7 @@
       <a
         wire:navigate
         href="{{ route($routePrefix.'.booking.create') }}"
-        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB22C] px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm hover:opacity-95 sm:w-auto"
+        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB22C] px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm hover:opacity-95 md:w-auto"
       >
         <i data-lucide="plus" class="h-4 w-4"></i>
         Tambah Booking
@@ -108,7 +108,7 @@
           <label class="block text-xs font-semibold text-slate-600">Status</label>
           <div class="relative mt-2">
             <select
-              class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
+              class="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm leading-normal
                      focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
               wire:model.live="status"
             >
@@ -117,7 +117,7 @@
                 <option value="{{ $s }}">{{ $statusLabel($s) }}</option>
               @endforeach
             </select>
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
@@ -128,7 +128,7 @@
           <label class="block text-xs font-semibold text-slate-600">Dari tanggal</label>
           <input
             type="date"
-            class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm
+            class="mt-2 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
                    focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
             wire:model.live="from"
           >
@@ -139,7 +139,7 @@
           <label class="block text-xs font-semibold text-slate-600">Sampai tanggal</label>
           <input
             type="date"
-            class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm
+            class="mt-2 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
                    focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
             wire:model.live="to"
           >
@@ -385,10 +385,10 @@
               </td>
 
               <td class="px-4 py-3">
-                <div class="flex justify-end gap-2">
+                <div class="flex flex-wrap justify-end gap-2">
                   <button
                     type="button"
-                    class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                    class="shrink-0 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                     @click="detail = @js($detailPayload); detailOpen = true"
                   >
                     Detail
@@ -397,17 +397,17 @@
                     <a
                       wire:navigate
                       href="{{ route($routePrefix.'.booking.edit', $b->id) }}"
-                      class="rounded-xl bg-[#854836] px-3 py-2 text-xs font-semibold text-white hover:opacity-95"
+                      class="inline-flex shrink-0 items-center whitespace-nowrap rounded-xl bg-[#854836] px-3 py-2 text-xs font-semibold text-white hover:opacity-95"
                     >
                       Edit
                     </a>
                   @endif
                   @if($canCheckin)
-                    <form method="POST" action="{{ route($routePrefix.'.booking.checkin', $b->id) }}">
+                    <form method="POST" action="{{ route($routePrefix.'.booking.checkin', $b->id) }}" class="shrink-0">
                       @csrf
                       <button
                         type="submit"
-                        class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 active:bg-emerald-200"
+                        class="whitespace-nowrap rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 active:bg-emerald-200"
                       >
                         Check-in
                       </button>
@@ -416,7 +416,7 @@
                   @if($canCheckout)
                     <button
                       type="button"
-                      class="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-700 hover:bg-sky-100 active:bg-sky-200"
+                      class="shrink-0 whitespace-nowrap rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-700 hover:bg-sky-100 active:bg-sky-200"
                       onclick="window.openCheckoutModal(this)"
                       data-action="{{ route($routePrefix.'.booking.checkout', $b->id) }}"
                       data-nama="@js($b->nama_tamu)"
@@ -432,11 +432,11 @@
                     </button>
                   @endif
                   @if($canFinish)
-                    <form method="POST" action="{{ route($routePrefix.'.booking.selesai', $b->id) }}">
+                    <form method="POST" action="{{ route($routePrefix.'.booking.selesai', $b->id) }}" class="shrink-0">
                       @csrf
                       <button
                         type="submit"
-                        class="rounded-xl border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200 active:bg-slate-300"
+                        class="whitespace-nowrap rounded-xl border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200 active:bg-slate-300"
                       >
                         Selesai
                       </button>

@@ -49,7 +49,7 @@
             <option value="admin">Admin</option>
             <option value="pegawai">Pegawai</option>
           </select>
-          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>
@@ -67,7 +67,7 @@
             <option value="1">Aktif</option>
             <option value="0">Nonaktif</option>
           </select>
-          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>

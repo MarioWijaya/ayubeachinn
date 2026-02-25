@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -14,15 +13,15 @@ class BookingSeeder extends Seeder
     {
         $seedTag = 'seed:booking-sample';
         $faker = fake();
-        $startDate = Carbon::create(2024, 1, 1);
-        $endDate = Carbon::create(2026, 12, 31);
+        $startDate = now()->startOfDay()->subYear();
+        $endDate = $startDate->copy()->addYears(2)->subDay();
         $today = now()->startOfDay();
 
         $pegawaiIds = DB::table('users')->where('level', 'pegawai')->pluck('id')->all();
         if ($pegawaiIds === []) {
             $pegawaiId = DB::table('users')->insertGetId([
                 'nama' => 'Pegawai Seed',
-                'username' => 'pegawai_seed_' . now()->format('YmdHis'),
+                'username' => 'pegawai_seed_'.now()->format('YmdHis'),
                 'password' => Hash::make('password'),
                 'level' => 'pegawai',
                 'status_aktif' => true,
@@ -94,6 +93,7 @@ class BookingSeeder extends Seeder
             return;
         }
 
+        $roomCount = $rooms->count();
         $sourceTypes = ['walk_in', 'telepon_wa', 'ota', 'lainnya'];
         $daysRange = $startDate->diffInDays($endDate) + 1;
         $hasSourceType = Schema::hasColumn('booking', 'source_type');
@@ -107,25 +107,29 @@ class BookingSeeder extends Seeder
         for ($dayOffset = 0; $dayOffset < $daysRange; $dayOffset++) {
             $checkInDate = $startDate->copy()->addDays($dayOffset);
             $checkOutDate = $checkInDate->copy()->addDay();
-            $isPastStay = $checkOutDate->lessThanOrEqualTo($today);
+            $isPastStay = $checkOutDate->lessThan($today);
             $isCheckoutToday = $checkOutDate->isSameDay($today);
             $isCheckInToday = $checkInDate->isSameDay($today);
+            $dailyBookingsCount = 1 + (($dayOffset % 5 === 0) ? 1 : 0);
+            $roomStartIndex = $dayOffset % $roomCount;
 
-            foreach ($rooms as $roomIndex => $room) {
+            for ($slot = 0; $slot < $dailyBookingsCount; $slot++) {
+                $roomIndex = ($roomStartIndex + ($slot * 7)) % $roomCount;
+                $room = $rooms->get($roomIndex);
                 $pegawaiId = $pegawaiIds[array_rand($pegawaiIds)];
                 $sumberBookingId = $sumberBookingIds !== [] ? $sumberBookingIds[array_rand($sumberBookingIds)] : null;
 
-                $extraBed = $faker->boolean(25);
+                $extraBed = $faker->boolean(18);
                 $extraBedQty = $extraBed ? $faker->numberBetween(1, 2) : 1;
                 $extraBedTarif = $extraBed ? $faker->randomElement([100000, 150000]) : null;
 
                 $status = 'menunggu';
                 if ($isPastStay) {
-                    $status = (($dayOffset + $roomIndex) % 12 === 0) ? 'batal' : 'selesai';
-                } elseif ($isCheckoutToday && (($dayOffset + $roomIndex) % 6 === 0)) {
+                    $status = (($dayOffset + $slot) % 10 === 0) ? 'batal' : 'selesai';
+                } elseif ($isCheckoutToday && (($dayOffset + $slot) % 3 === 0)) {
                     $status = 'check_out';
                 } elseif ($isCheckInToday) {
-                    $status = (($dayOffset + $roomIndex) % 3 === 0) ? 'check_in' : 'menunggu';
+                    $status = (($dayOffset + $slot) % 2 === 0) ? 'check_in' : 'menunggu';
                 }
 
                 $sourceType = $faker->randomElement($sourceTypes);

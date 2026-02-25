@@ -22,6 +22,65 @@ const loadFullCalendar = () => {
 window.flatpickr = flatpickr;
 
 // =================== LUCIDE ===================
+const lucideCdnSources = [
+  "https://unpkg.com/lucide@latest/dist/umd/lucide.min.js",
+  "https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js",
+];
+
+let lucideLoadPromise = null;
+
+const ensureLucideLoaded = () => {
+  if (window.lucide?.createIcons) {
+    return Promise.resolve(true);
+  }
+
+  if (lucideLoadPromise) {
+    return lucideLoadPromise;
+  }
+
+  lucideLoadPromise = new Promise((resolve) => {
+    const existingScript = document.querySelector(
+      'script[data-lucide-loader="fallback"]',
+    );
+
+    if (existingScript) {
+      const checkExisting = () => resolve(Boolean(window.lucide?.createIcons));
+      existingScript.addEventListener("load", checkExisting, { once: true });
+      existingScript.addEventListener("error", () => resolve(false), {
+        once: true,
+      });
+      return;
+    }
+
+    const tryLoad = (index) => {
+      if (index >= lucideCdnSources.length) {
+        resolve(false);
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = lucideCdnSources[index];
+      script.async = true;
+      script.defer = true;
+      script.dataset.lucideLoader = "fallback";
+
+      script.onload = () => resolve(Boolean(window.lucide?.createIcons));
+      script.onerror = () => {
+        script.remove();
+        tryLoad(index + 1);
+      };
+
+      document.head.appendChild(script);
+    };
+
+    tryLoad(0);
+  }).finally(() => {
+    lucideLoadPromise = null;
+  });
+
+  return lucideLoadPromise;
+};
+
 const refreshIcons = () => {
   if (!window.lucide?.createIcons) return false;
   window.lucide.createIcons();
@@ -29,10 +88,25 @@ const refreshIcons = () => {
 };
 
 const scheduleLucideRefresh = () => {
-  refreshIcons();
-  requestAnimationFrame(refreshIcons);
-  setTimeout(refreshIcons, 50);
-  setTimeout(refreshIcons, 250);
+  const runRefresh = () => {
+    refreshIcons();
+    requestAnimationFrame(refreshIcons);
+    setTimeout(refreshIcons, 50);
+    setTimeout(refreshIcons, 250);
+  };
+
+  if (refreshIcons()) {
+    runRefresh();
+    return;
+  }
+
+  ensureLucideLoaded().then((loaded) => {
+    if (!loaded) {
+      return;
+    }
+
+    runRefresh();
+  });
 };
 
 // =================== ACTIVE SIDEBAR ===================

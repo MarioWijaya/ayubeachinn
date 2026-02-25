@@ -82,7 +82,7 @@
                      focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/40"
               readonly
             >
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="calendar" class="h-4 w-4"></i>
             </span>
           </div>
@@ -107,7 +107,7 @@
             >
               <option value="">Pilih tanggal menginap terlebih dahulu</option>
             </select>
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
@@ -127,7 +127,7 @@
             >
               <option value="">Pilih tipe kamar terlebih dahulu</option>
             </select>
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
@@ -165,7 +165,7 @@
               <option value="ota">OTA</option>
               <option value="lainnya">Lainnya</option>
             </select>
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>

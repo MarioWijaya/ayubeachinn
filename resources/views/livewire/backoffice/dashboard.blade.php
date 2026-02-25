@@ -15,10 +15,10 @@
 
     <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:flex lg:flex-wrap lg:items-center">
-        <div class="relative w-full md:col-span-1 lg:w-auto">
+        <div class="relative min-w-0 w-full md:col-span-1 lg:w-auto">
           <select
             data-preset-select
-            class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2 pr-9 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
+            class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
           >
             <option value="all">Semua</option>
             <option value="today">Hari ini</option>
@@ -28,23 +28,23 @@
             <option value="month">Bulan ini</option>
             <option value="custom" hidden>Kustom</option>
           </select>
-          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>
 
-        <div class="grid grid-cols-1 gap-2 md:col-span-1 md:grid-cols-[1fr_auto_1fr] lg:flex lg:items-center">
+        <div class="min-w-0 grid grid-cols-1 gap-2 md:col-span-1 md:grid-cols-[1fr_auto_1fr] lg:flex lg:items-center">
           <input
             type="date"
             data-filter-start
-            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
+            class="h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
             aria-label="Dari tanggal"
           >
           <span class="hidden text-center text-xs font-semibold text-slate-500 md:block">s/d</span>
           <input
             type="date"
             data-filter-end
-            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
+            class="h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
             aria-label="Sampai tanggal"
           >
         </div>
@@ -52,7 +52,7 @@
         <button
           type="button"
           data-filter-reset
-          class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 md:w-auto"
+          class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 md:w-auto md:text-xs"
         >
           <i data-lucide="rotate-ccw" class="h-3.5 w-3.5"></i>
           Reset
@@ -166,7 +166,7 @@
         >
         <div class="relative">
           <select
-            class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2 pr-9 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
+            class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-xs font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
             data-booking-filter
           >
             <option value="">Semua status</option>
@@ -176,7 +176,7 @@
             <option value="selesai">Selesai</option>
             <option value="batal">Batal</option>
           </select>
-          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>

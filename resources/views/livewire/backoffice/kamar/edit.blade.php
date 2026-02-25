@@ -80,7 +80,7 @@
               @endforeach
             </select>
 
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
@@ -119,7 +119,7 @@
                      focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 focus:border-[#FFB22C]"
               placeholder="Contoh: 2"
             >
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400">
               orang
             </span>
           </div>
@@ -139,7 +139,7 @@
               <option value="perbaikan" {{ old('status_kamar', $kamar->status_kamar)=='perbaikan' ? 'selected' : '' }}>perbaikan</option>
             </select>
 
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
@@ -161,7 +161,7 @@
                        focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 focus:border-[#FFB22C]"
                 placeholder="Klik untuk memilih tanggal"
               >
-              <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
                 <i data-lucide="calendar" class="h-4 w-4"></i>
               </span>
             </div>
@@ -181,7 +181,7 @@
                        focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 focus:border-[#FFB22C]"
                 placeholder="Klik untuk memilih tanggal"
               >
-              <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
                 <i data-lucide="calendar" class="h-4 w-4"></i>
               </span>
             </div>

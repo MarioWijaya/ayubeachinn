@@ -9,8 +9,8 @@
     subtitle="Ringkasan pendapatan booking dan layanan."
   >
     <x-slot:rightSlot>
-      <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-        <div class="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm">
+      <div class="grid w-full grid-cols-1 gap-2 lg:flex lg:w-auto lg:flex-wrap lg:items-center lg:justify-end">
+        <div class="w-full max-w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm lg:w-auto">
           <span class="text-slate-500">Total</span>
           <span class="mx-1">:</span>
           <span class="text-slate-900">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
@@ -21,8 +21,8 @@
           wire:click="requestDownload('pdf')"
           wire:loading.attr="disabled"
           wire:target="requestDownload"
-          class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#FFB22C] px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm
-                 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          class="inline-flex w-full max-w-full items-center justify-center gap-2 rounded-2xl bg-[#FFB22C] px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm
+                 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 lg:w-auto"
         >
           <span wire:loading.remove wire:target="requestDownload">Download PDF</span>
           <span wire:loading wire:target="requestDownload">Membuat Preview…</span>
@@ -33,8 +33,8 @@
           wire:click="requestDownload('csv')"
           wire:loading.attr="disabled"
           wire:target="requestDownload"
-          class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm
-                 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          class="inline-flex w-full max-w-full items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm
+                 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 lg:w-auto"
         >
           <span wire:loading.remove wire:target="requestDownload">Download CSV</span>
           <span wire:loading wire:target="requestDownload">Membuat Preview…</span>
@@ -62,7 +62,7 @@
         <label class="block text-xs font-semibold text-slate-600">Dari tanggal</label>
         <input
           type="date"
-          class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm
+          class="mt-2 h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
                  focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
           wire:model.live="from"
           @disabled($isAdmin)
@@ -72,7 +72,7 @@
         <label class="block text-xs font-semibold text-slate-600">Sampai tanggal</label>
         <input
           type="date"
-          class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm
+          class="mt-2 h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
                  focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
           wire:model.live="to"
           @disabled($isAdmin)

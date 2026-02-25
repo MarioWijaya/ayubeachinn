@@ -15,14 +15,13 @@ it('seeds one booking per room for the current date', function () {
 
     $today = now()->toDateString();
 
-    $totalRooms = DB::table('kamar')->count();
     $totalBookings = DB::table('booking')
         ->whereDate('tanggal_check_in', '<=', $today)
         ->whereDate('tanggal_check_out', '>', $today)
         ->count();
 
-    expect($totalRooms)->toBe(40);
-    expect($totalBookings)->toBe($totalRooms);
+    expect($totalBookings)->toBeGreaterThanOrEqual(1);
+    expect($totalBookings)->toBeLessThanOrEqual(2);
 
     $duplicateRooms = DB::table('booking')
         ->select('kamar_id', DB::raw('COUNT(*) as total'))
@@ -42,8 +41,8 @@ it('seeds bookings for every day in the configured seed range', function () {
         BookingSeeder::class,
     ]);
 
-    $startDate = Carbon::create(2024, 1, 1)->toDateString();
-    $endDate = Carbon::create(2026, 12, 31)->toDateString();
+    $startDate = now()->startOfDay()->subYear()->toDateString();
+    $endDate = Carbon::parse($startDate)->addYears(2)->subDay()->toDateString();
     $expectedDays = (int) Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate)) + 1;
 
     $seededDays = DB::table('booking')
@@ -52,4 +51,11 @@ it('seeds bookings for every day in the configured seed range', function () {
         ->count('tanggal_check_in');
 
     expect($seededDays)->toBe($expectedDays);
+
+    $totalBookings = DB::table('booking')
+        ->whereBetween('tanggal_check_in', [$startDate, $endDate])
+        ->count();
+
+    expect($totalBookings)->toBeGreaterThanOrEqual($expectedDays);
+    expect($totalBookings)->toBeLessThanOrEqual($expectedDays * 2);
 });
