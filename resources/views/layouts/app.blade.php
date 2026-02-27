@@ -83,10 +83,35 @@
   @livewireScripts
   <script>
     (() => {
-      const refreshLucideIcons = () => {
-        if (window.lucide?.createIcons) {
-          window.lucide.createIcons();
+      const refreshLucideIcons = (root = document) => {
+        if (!window.lucide?.icons) {
+          return;
         }
+
+        root.querySelectorAll('i[data-lucide]').forEach((placeholder) => {
+          const iconName = placeholder.getAttribute('data-lucide');
+          const iconDefinition = window.lucide.icons?.[iconName];
+
+          if (!iconDefinition) {
+            return;
+          }
+
+          const attributes = Array.from(placeholder.attributes).reduce((carry, attribute) => {
+            carry[attribute.name] = attribute.value;
+            return carry;
+          }, {});
+
+          const svgMarkup = iconDefinition.toSvg(attributes);
+          const tempWrapper = document.createElement('div');
+          tempWrapper.innerHTML = svgMarkup;
+
+          const svgElement = tempWrapper.firstElementChild;
+          if (!svgElement) {
+            return;
+          }
+
+          placeholder.replaceWith(svgElement);
+        });
       };
 
       if (window.__lucideAutoRefreshBound) {

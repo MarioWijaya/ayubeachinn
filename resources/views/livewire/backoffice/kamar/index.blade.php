@@ -31,7 +31,7 @@
     <div class="p-4 sm:p-5 space-y-4">
       <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div class="relative min-w-0 w-full lg:max-w-2xl">
-          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span wire:ignore class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
             <i data-lucide="search" class="h-4 w-4"></i>
           </span>
           <input

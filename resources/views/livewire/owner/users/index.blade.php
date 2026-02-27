@@ -225,12 +225,6 @@
   </div>
 
   <script>
-    function renderOwnerUsersLucideIcons() {
-      if (window.lucide?.createIcons) {
-        window.lucide.createIcons();
-      }
-    }
-
     function bindOwnerUsersHooks() {
       if (!window.Livewire || window.__ownerUsersHooksBound) {
         return;
@@ -246,18 +240,14 @@
         if (typeof window.__lwScrollY === "number") {
           window.scrollTo({ top: window.__lwScrollY, behavior: "instant" });
         }
-
-        renderOwnerUsersLucideIcons();
       });
     }
 
-    renderOwnerUsersLucideIcons();
     bindOwnerUsersHooks();
 
     document.addEventListener("livewire:initialized", bindOwnerUsersHooks, { once: true });
     document.addEventListener("livewire:navigated", () => {
       bindOwnerUsersHooks();
-      renderOwnerUsersLucideIcons();
     });
   </script>
 </div>

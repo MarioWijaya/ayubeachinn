@@ -77,7 +77,7 @@
     <div class="p-4 sm:p-5">
       <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div class="relative min-w-0 w-full lg:max-w-xl">
-          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span wire:ignore class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
             <i data-lucide="search" class="h-4 w-4"></i>
           </span>
           <input
@@ -667,38 +667,7 @@
 
 </div>
 
-{{-- lucide refresh setelah livewire update --}}
 <script>
-  const renderBookingIndexLucideIcons = () => {
-    if (window.lucide) {
-      window.lucide.createIcons();
-    }
-  };
-
-  const bindBookingIndexLucideHooks = () => {
-    if (window.__bookingIndexLucideHookBound) {
-      return;
-    }
-
-    window.__bookingIndexLucideHookBound = true;
-
-    const registerProcessedHook = () => {
-      if (!window.Livewire || window.__bookingIndexLucideProcessedHookBound) {
-        return;
-      }
-
-      window.__bookingIndexLucideProcessedHookBound = true;
-      Livewire.hook('message.processed', renderBookingIndexLucideIcons);
-    };
-
-    registerProcessedHook();
-    document.addEventListener('livewire:initialized', registerProcessedHook, { once: true });
-    document.addEventListener('livewire:navigated', renderBookingIndexLucideIcons);
-  };
-
-  bindBookingIndexLucideHooks();
-  renderBookingIndexLucideIcons();
-
   window.openCheckoutModal = function (button) {
     const modal = document.getElementById('checkoutModal');
     if (!modal) return;
@@ -774,7 +743,6 @@
   });
 
   document.addEventListener('livewire:navigated', () => {
-    renderBookingIndexLucideIcons();
     window.closeCheckoutModal();
   });
 </script>
