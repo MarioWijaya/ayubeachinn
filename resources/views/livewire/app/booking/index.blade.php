@@ -669,6 +669,36 @@
 
 {{-- lucide refresh setelah livewire update --}}
 <script>
+  const renderBookingIndexLucideIcons = () => {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  };
+
+  const bindBookingIndexLucideHooks = () => {
+    if (window.__bookingIndexLucideHookBound) {
+      return;
+    }
+
+    window.__bookingIndexLucideHookBound = true;
+
+    const registerProcessedHook = () => {
+      if (!window.Livewire || window.__bookingIndexLucideProcessedHookBound) {
+        return;
+      }
+
+      window.__bookingIndexLucideProcessedHookBound = true;
+      Livewire.hook('message.processed', renderBookingIndexLucideIcons);
+    };
+
+    registerProcessedHook();
+    document.addEventListener('livewire:initialized', registerProcessedHook, { once: true });
+    document.addEventListener('livewire:navigated', renderBookingIndexLucideIcons);
+  };
+
+  bindBookingIndexLucideHooks();
+  renderBookingIndexLucideIcons();
+
   window.openCheckoutModal = function (button) {
     const modal = document.getElementById('checkoutModal');
     if (!modal) return;
@@ -744,7 +774,7 @@
   });
 
   document.addEventListener('livewire:navigated', () => {
-    if (window.lucide) window.lucide.createIcons();
+    renderBookingIndexLucideIcons();
     window.closeCheckoutModal();
   });
 </script>
