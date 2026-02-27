@@ -50,7 +50,9 @@
             <option value="pegawai">Pegawai</option>
           </select>
           <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-            <i data-lucide="chevron-down" class="h-4 w-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"></path>
+            </svg>
           </span>
         </div>
       </div>
@@ -68,7 +70,9 @@
             <option value="0">Nonaktif</option>
           </select>
           <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-            <i data-lucide="chevron-down" class="h-4 w-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"></path>
+            </svg>
           </span>
         </div>
       </div>
@@ -78,7 +82,10 @@
       <button type="button"
               wire:click="resetFilters"
               class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:w-auto">
-        <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+          <path d="M3 2v6h6"></path>
+          <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
+        </svg>
         Reset
       </button>
     </div>

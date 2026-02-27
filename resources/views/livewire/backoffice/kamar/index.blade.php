@@ -32,7 +32,10 @@
       <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div class="relative min-w-0 w-full lg:max-w-2xl">
           <span wire:ignore class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-            <i data-lucide="search" class="h-4 w-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
           </span>
           <input
             type="text"
@@ -49,7 +52,10 @@
           class="w-full lg:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300
                  bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
-          <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+            <path d="M3 2v6h6"></path>
+            <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
+          </svg>
           Reset
         </button>
       </div>
@@ -69,7 +75,9 @@
               <option value="perbaikan">Perbaikan</option>
             </select>
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
             </span>
           </div>
         </div>
@@ -86,7 +94,18 @@
               wire:model.live="checkFrom"
             >
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+                <path d="M8 14h.01"></path>
+                <path d="M12 14h.01"></path>
+                <path d="M16 14h.01"></path>
+                <path d="M8 18h.01"></path>
+                <path d="M12 18h.01"></path>
+                <path d="M16 18h.01"></path>
+              </svg>
             </span>
           </div>
         </div>
@@ -103,7 +122,18 @@
               wire:model.live="checkTo"
             >
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+                <path d="M8 14h.01"></path>
+                <path d="M12 14h.01"></path>
+                <path d="M16 14h.01"></path>
+                <path d="M8 18h.01"></path>
+                <path d="M12 18h.01"></path>
+                <path d="M16 18h.01"></path>
+              </svg>
             </span>
           </div>
         </div>
