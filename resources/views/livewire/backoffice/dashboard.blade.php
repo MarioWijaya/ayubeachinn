@@ -13,12 +13,12 @@
       <p class="text-sm text-slate-600">Ringkasan performa hotel berdasarkan periode yang dipilih.</p>
     </div>
 
-    <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-      <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:flex lg:flex-wrap lg:items-center">
-        <div class="relative min-w-0 w-full md:col-span-1 lg:w-auto">
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-center">
+        <div class="relative min-w-0 w-full sm:col-span-2 lg:w-auto">
           <select
             data-preset-select
-            class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-11 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
+            class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-11 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
           >
             <option value="all">Semua</option>
             <option value="today">Hari ini</option>
@@ -28,31 +28,41 @@
             <option value="month">Bulan ini</option>
             <option value="custom" hidden>Kustom</option>
           </select>
-          <span class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-slate-400">
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>
 
-        <div class="min-w-0 grid grid-cols-1 gap-2 md:col-span-1 md:grid-cols-[1fr_auto_1fr] lg:flex lg:items-center">
-          <input
-            type="date"
-            data-filter-start
-            class="h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
-            aria-label="Dari tanggal"
-          >
-          <span class="hidden text-center text-xs font-semibold text-slate-500 md:block">s/d</span>
-          <input
-            type="date"
-            data-filter-end
-            class="h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
-            aria-label="Sampai tanggal"
-          >
+        <div class="min-w-0 grid grid-cols-1 gap-3 sm:col-span-2 sm:grid-cols-[1fr_auto_1fr] lg:flex lg:items-center">
+          <div class="relative min-w-0 w-full">
+            <input
+              type="date"
+              data-filter-start
+              class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm font-semibold leading-normal text-slate-700 [color-scheme:light] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
+              aria-label="Dari tanggal"
+            >
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+            </span>
+          </div>
+          <span class="hidden text-center text-xs font-semibold text-slate-500 sm:block">s/d</span>
+          <div class="relative min-w-0 w-full">
+            <input
+              type="date"
+              data-filter-end
+              class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm font-semibold leading-normal text-slate-700 [color-scheme:light] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
+              aria-label="Sampai tanggal"
+            >
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+            </span>
+          </div>
         </div>
 
         <button
           type="button"
           data-filter-reset
-          class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 md:w-auto md:text-xs"
+          class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:col-span-2 lg:w-auto"
         >
           <i data-lucide="rotate-ccw" class="h-3.5 w-3.5"></i>
           Reset
@@ -176,7 +186,7 @@
             <option value="selesai">Selesai</option>
             <option value="batal">Batal</option>
           </select>
-          <span class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-slate-400">
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>

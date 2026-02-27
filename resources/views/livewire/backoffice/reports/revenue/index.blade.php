@@ -56,27 +56,41 @@
   @endif
 
   {{-- Filters --}}
-  <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <div>
+      <div class="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3">
         <label class="block text-xs font-semibold text-slate-600">Dari tanggal</label>
-        <input
-          type="date"
-          class="mt-2 h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
-                 focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
-          wire:model.live="from"
-          @disabled($isAdmin)
-        >
+        <div class="relative mt-2">
+          <input
+            type="date"
+            class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm leading-normal [color-scheme:light]
+                   [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full
+                   [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0
+                   focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
+            wire:model.live="from"
+            @disabled($isAdmin)
+          >
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <i data-lucide="calendar-days" class="h-4 w-4"></i>
+          </span>
+        </div>
       </div>
-      <div>
+      <div class="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3">
         <label class="block text-xs font-semibold text-slate-600">Sampai tanggal</label>
-        <input
-          type="date"
-          class="mt-2 h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
-                 focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
-          wire:model.live="to"
-          @disabled($isAdmin)
-        >
+        <div class="relative mt-2">
+          <input
+            type="date"
+            class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm leading-normal [color-scheme:light]
+                   [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full
+                   [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0
+                   focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
+            wire:model.live="to"
+            @disabled($isAdmin)
+          >
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <i data-lucide="calendar-days" class="h-4 w-4"></i>
+          </span>
+        </div>
       </div>
 
       {{-- Quick hint (optional) --}}

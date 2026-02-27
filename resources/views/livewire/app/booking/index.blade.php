@@ -76,14 +76,14 @@
   <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
     <div class="p-4 sm:p-5">
       <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div class="relative w-full lg:max-w-xl">
+        <div class="relative min-w-0 w-full lg:max-w-xl">
           <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
             <i data-lucide="search" class="h-4 w-4"></i>
           </span>
           <input
             type="text"
             placeholder="Cari nama tamu / no kamar..."
-            class="w-full rounded-xl border border-slate-300 bg-white pl-9 pr-3 py-2.5 text-sm
+            class="h-11 min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm leading-normal
                    focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
             wire:model.live.debounce.300ms="q"
           >
@@ -104,11 +104,11 @@
 
       <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {{-- Status --}}
-        <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <div class="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3">
           <label class="block text-xs font-semibold text-slate-600">Status</label>
           <div class="relative mt-2">
             <select
-              class="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm leading-normal
+              class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm leading-normal
                      focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
               wire:model.live="status"
             >
@@ -117,32 +117,46 @@
                 <option value="{{ $s }}">{{ $statusLabel($s) }}</option>
               @endforeach
             </select>
-            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
         </div>
 
         {{-- Dari --}}
-        <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <div class="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3">
           <label class="block text-xs font-semibold text-slate-600">Dari tanggal</label>
-          <input
-            type="date"
-            class="mt-2 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
-                   focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
-            wire:model.live="from"
-          >
+          <div class="relative mt-2">
+            <input
+              type="date"
+              class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm leading-normal [color-scheme:light]
+                     [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full
+                     [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0
+                     focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
+              wire:model.live="from"
+            >
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+            </span>
+          </div>
         </div>
 
         {{-- Sampai --}}
-        <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <div class="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:col-span-2 lg:col-span-1">
           <label class="block text-xs font-semibold text-slate-600">Sampai tanggal</label>
-          <input
-            type="date"
-            class="mt-2 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-normal
-                   focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
-            wire:model.live="to"
-          >
+          <div class="relative mt-2">
+            <input
+              type="date"
+              class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm leading-normal [color-scheme:light]
+                     [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full
+                     [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0
+                     focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
+              wire:model.live="to"
+            >
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+            </span>
+          </div>
         </div>
       </div>
 
