@@ -582,11 +582,18 @@
       window.__bookingCreateLucideHookBound = true;
 
       document.addEventListener('livewire:navigated', renderLucideIcons);
-      document.addEventListener('livewire:initialized', () => {
-        if (window.Livewire) {
-          Livewire.hook('message.processed', renderLucideIcons);
+
+      const registerProcessedHook = () => {
+        if (!window.Livewire || window.__bookingCreateLucideProcessedHookBound) {
+          return;
         }
-      });
+
+        window.__bookingCreateLucideProcessedHookBound = true;
+        Livewire.hook('message.processed', renderLucideIcons);
+      };
+
+      registerProcessedHook();
+      document.addEventListener('livewire:initialized', registerProcessedHook, { once: true });
     }
 
     function setTanggalRangeValue(value) {

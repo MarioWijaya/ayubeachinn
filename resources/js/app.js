@@ -109,7 +109,14 @@ const refreshIcons = () => {
 };
 
 const scheduleLucideRefresh = () => {
+  if (window.__lucideRefreshQueued) {
+    return;
+  }
+
+  window.__lucideRefreshQueued = true;
+
   const runRefresh = () => {
+    window.__lucideRefreshQueued = false;
     refreshIcons();
     requestAnimationFrame(refreshIcons);
     setTimeout(refreshIcons, 50);
@@ -404,11 +411,14 @@ const initLivewireListeners = () => {
 
 // =================== SCROLL FIX (pagination/filter) ===================
 const initScrollLock = () => {
-  if (window.__scrollLockInit) return;
-  window.__scrollLockInit = true;
+  if (window.__scrollLockInit) {
+    return;
+  }
 
   // CASE A: request Livewire biasa (filter, paginate yang wire:click, dll)
   if (window.Livewire?.hook) {
+    window.__scrollLockInit = true;
+
     window.Livewire.hook("message.sent", () => {
       window.__lwScrollY = window.scrollY;
     });
@@ -433,6 +443,36 @@ const initScrollLock = () => {
       window.scrollTo({ top: window.__lwScrollY, behavior: "instant" });
     }
   });
+};
+
+const initLivewireInputIconRefresh = () => {
+  if (window.__livewireInputIconRefreshInit) {
+    return;
+  }
+
+  window.__livewireInputIconRefreshInit = true;
+
+  const refreshFromEvent = (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    if (!target.closest("[wire\\:id]")) {
+      return;
+    }
+
+    if (
+      target.matches("input, select, textarea") ||
+      target.closest("input, select, textarea")
+    ) {
+      scheduleLucideRefresh();
+    }
+  };
+
+  document.addEventListener("input", refreshFromEvent, true);
+  document.addEventListener("change", refreshFromEvent, true);
+  document.addEventListener("keyup", refreshFromEvent, true);
 };
 
 // =================== REALTIME CLOCK ===================
@@ -482,6 +522,7 @@ const bootUi = () => {
   bootAvailabilityCalendar();
   initCalendarResizeListener();
   initScrollLock();
+  initLivewireInputIconRefresh();
   window.initRealtimeClock?.();
 };
 

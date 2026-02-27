@@ -225,20 +225,39 @@
   </div>
 
   <script>
-  document.addEventListener("livewire:navigated", () => {
-    // biar tidak aneh saat pindah menu
-  });
-
-  document.addEventListener("livewire:initialized", () => {
-    Livewire.hook("message.sent", () => {
-      window.__lwScrollY = window.scrollY;
-    });
-
-    Livewire.hook("message.processed", () => {
-      if (typeof window.__lwScrollY === "number") {
-        window.scrollTo({ top: window.__lwScrollY, behavior: "instant" });
+    function renderOwnerUsersLucideIcons() {
+      if (window.lucide?.createIcons) {
+        window.lucide.createIcons();
       }
+    }
+
+    function bindOwnerUsersHooks() {
+      if (!window.Livewire || window.__ownerUsersHooksBound) {
+        return;
+      }
+
+      window.__ownerUsersHooksBound = true;
+
+      Livewire.hook("message.sent", () => {
+        window.__lwScrollY = window.scrollY;
+      });
+
+      Livewire.hook("message.processed", () => {
+        if (typeof window.__lwScrollY === "number") {
+          window.scrollTo({ top: window.__lwScrollY, behavior: "instant" });
+        }
+
+        renderOwnerUsersLucideIcons();
+      });
+    }
+
+    renderOwnerUsersLucideIcons();
+    bindOwnerUsersHooks();
+
+    document.addEventListener("livewire:initialized", bindOwnerUsersHooks, { once: true });
+    document.addEventListener("livewire:navigated", () => {
+      bindOwnerUsersHooks();
+      renderOwnerUsersLucideIcons();
     });
-  });
   </script>
 </div>
