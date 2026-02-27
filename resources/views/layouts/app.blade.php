@@ -81,6 +81,38 @@
   </div>
 
   @livewireScripts
+  <script>
+    (() => {
+      const refreshLucideIcons = () => {
+        if (window.lucide?.createIcons) {
+          window.lucide.createIcons();
+        }
+      };
+
+      if (window.__lucideAutoRefreshBound) {
+        refreshLucideIcons();
+        return;
+      }
+
+      window.__lucideAutoRefreshBound = true;
+
+      const bindProcessedHook = () => {
+        if (!window.Livewire || window.__lucideProcessedHookBound) {
+          return;
+        }
+
+        window.__lucideProcessedHookBound = true;
+        Livewire.hook('message.processed', refreshLucideIcons);
+      };
+
+      document.addEventListener('DOMContentLoaded', refreshLucideIcons);
+      document.addEventListener('livewire:navigated', refreshLucideIcons);
+      document.addEventListener('livewire:initialized', bindProcessedHook, { once: true });
+
+      bindProcessedHook();
+      requestAnimationFrame(refreshLucideIcons);
+    })();
+  </script>
   @stack('scripts')
 </body>
 </html>
