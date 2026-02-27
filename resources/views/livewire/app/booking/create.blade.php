@@ -83,7 +83,18 @@
               readonly
             >
             <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-              <i data-lucide="calendar" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+                <path d="M8 14h.01"></path>
+                <path d="M12 14h.01"></path>
+                <path d="M16 14h.01"></path>
+                <path d="M8 18h.01"></path>
+                <path d="M12 18h.01"></path>
+                <path d="M16 18h.01"></path>
+              </svg>
             </span>
           </div>
 
@@ -108,7 +119,9 @@
               <option value="">Pilih tanggal menginap terlebih dahulu</option>
             </select>
             <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
             </span>
           </div>
           <input id="selectedTipeKamarValue" type="hidden" wire:model.live="tipe_kamar">
@@ -128,7 +141,9 @@
               <option value="">Pilih tipe kamar terlebih dahulu</option>
             </select>
             <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
             </span>
           </div>
 
@@ -166,7 +181,9 @@
               <option value="lainnya">Lainnya</option>
             </select>
             <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
             </span>
           </div>
           @error('source_type') <div class="mt-1 text-sm text-rose-600">{{ $message }}</div> @enderror
@@ -214,7 +231,12 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div class="flex items-start gap-3">
             <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFB22C]/20 text-[#854836]">
-              <i data-lucide="bed" class="h-5 w-5"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+                <path d="M2 4v16"></path>
+                <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
+                <path d="M2 17h20"></path>
+                <path d="M6 8v9"></path>
+              </svg>
             </span>
             <div>
               <h2 class="text-lg font-semibold text-slate-900">Layanan Tambahan</h2>
@@ -235,7 +257,9 @@
                 wire:click="decQty"
                 @disabled($layanan_id === null || $layanan_qty <= 1)
               >
-                <i data-lucide="minus" class="h-4 w-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                </svg>
               </button>
 
               <input
@@ -254,7 +278,10 @@
                 wire:click="incQty"
                 @disabled($layanan_id === null || $layanan_qty >= 5)
               >
-                <i data-lucide="plus" class="h-4 w-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5v14"></path>
+                </svg>
               </button>
             </div>
 
@@ -282,7 +309,10 @@
           >
             <input type="radio" class="sr-only" wire:model.live="layanan_id" value="">
             <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-              <i data-lucide="ban" class="h-4 w-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="m4.9 4.9 14.2 14.2"></path>
+              </svg>
             </span>
 
             <div>
@@ -313,7 +343,12 @@
 
               <div class="flex items-start gap-3">
                 <span class="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFB22C]/20 text-[#854836]">
-                  <i data-lucide="bed" class="h-4 w-4"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                    <path d="M2 4v16"></path>
+                    <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
+                    <path d="M2 17h20"></path>
+                    <path d="M6 8v9"></path>
+                  </svg>
                 </span>
 
                 <div>
@@ -567,34 +602,6 @@
   <script>
     let fp = null;
     let availabilityRequestToken = 0;
-
-    function renderLucideIcons() {
-      if (window.lucide) {
-        window.lucide.createIcons();
-      }
-    }
-
-    function bindLucideHooks() {
-      if (window.__bookingCreateLucideHookBound) {
-        return;
-      }
-
-      window.__bookingCreateLucideHookBound = true;
-
-      document.addEventListener('livewire:navigated', renderLucideIcons);
-
-      const registerProcessedHook = () => {
-        if (!window.Livewire || window.__bookingCreateLucideProcessedHookBound) {
-          return;
-        }
-
-        window.__bookingCreateLucideProcessedHookBound = true;
-        Livewire.hook('message.processed', renderLucideIcons);
-      };
-
-      registerProcessedHook();
-      document.addEventListener('livewire:initialized', registerProcessedHook, { once: true });
-    }
 
     function setTanggalRangeValue(value) {
       const hidden = document.getElementById('tanggalRangeValue');
@@ -905,10 +912,8 @@
     function initBookingCreateFlow() {
       initTanggalPicker();
       bindTypeRoomEvents();
-      renderLucideIcons();
     }
 
-    bindLucideHooks();
     document.addEventListener('DOMContentLoaded', initBookingCreateFlow);
     document.addEventListener('livewire:navigated', initBookingCreateFlow);
     initBookingCreateFlow();
