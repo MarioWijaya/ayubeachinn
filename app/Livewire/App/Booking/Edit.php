@@ -19,6 +19,18 @@ class Edit extends Component
 
     public int $bookingId;
 
+    /**
+     * @return array<int, string>
+     */
+    private function editableStatusList(Booking $booking): array
+    {
+        if ($booking->status_booking === 'check_in') {
+            return ['menunggu', 'check_in'];
+        }
+
+        return ['menunggu', 'check_in', 'batal'];
+    }
+
     public function mount(int $id): void
     {
         $this->bookingId = $id;
@@ -32,12 +44,12 @@ class Edit extends Component
     public function render(): View
     {
         $booking = Booking::query()->find($this->bookingId);
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         $this->authorize('update', $booking);
 
         $kamar = DB::table('kamar')->orderBy('nomor_kamar')->get();
-        $statusList = ['menunggu', 'check_in', 'batal'];
+        $statusList = $this->editableStatusList($booking);
 
         $layananList = DB::table('layanan')
             ->where('aktif', 1)

@@ -17,6 +17,18 @@ class BookingController extends Controller
 {
     private array $statusList = ['menunggu', 'check_in', 'batal'];
 
+    /**
+     * @return array<int, string>
+     */
+    private function editableStatusList(Booking $booking): array
+    {
+        if ($booking->status_booking === 'check_in') {
+            return ['menunggu', 'check_in'];
+        }
+
+        return $this->statusList;
+    }
+
     public function index(Request $request): View
     {
         $q = trim((string) $request->query('q', ''));
@@ -56,10 +68,10 @@ class BookingController extends Controller
 
         if ($q !== '') {
             $query->where(function ($subQuery) use ($q) {
-                $subQuery->where('booking.id', 'like', '%' . $q . '%')
-                    ->orWhere('booking.nama_tamu', 'like', '%' . $q . '%')
-                    ->orWhere('kamar.nomor_kamar', 'like', '%' . $q . '%')
-                    ->orWhere('kamar.tipe_kamar', 'like', '%' . $q . '%');
+                $subQuery->where('booking.id', 'like', '%'.$q.'%')
+                    ->orWhere('booking.nama_tamu', 'like', '%'.$q.'%')
+                    ->orWhere('kamar.nomor_kamar', 'like', '%'.$q.'%')
+                    ->orWhere('kamar.tipe_kamar', 'like', '%'.$q.'%');
             });
         }
 
@@ -108,7 +120,7 @@ class BookingController extends Controller
             ->where('booking.id', $id)
             ->first();
 
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         $riwayatPerpanjangan = DB::table('perpanjangan_booking')
             ->where('booking_id', $id)
@@ -128,6 +140,7 @@ class BookingController extends Controller
             'tipeListSidebar'
         ));
     }
+
     /**
      * OPTIONAL:
      * Kalau create booking sudah Livewire, method ini tidak dipakai.
@@ -165,7 +178,7 @@ class BookingController extends Controller
             'layanan_qty' => ['nullable', 'integer', 'min:0', 'max:5'],
         ]);
         $validator->sometimes('layanan_qty', ['required', 'integer', 'min:1', 'max:5'], function ($input) {
-            return !empty($input->layanan_id);
+            return ! empty($input->layanan_id);
         });
         $validator->validate();
 
@@ -179,7 +192,7 @@ class BookingController extends Controller
             ->whereIn('status_booking', ['menunggu', 'check_in'])
             ->where(function ($q) use ($checkIn, $checkOut) {
                 $q->where('tanggal_check_in', '<', $checkOut)
-                  ->where('tanggal_check_out', '>', $checkIn);
+                    ->where('tanggal_check_out', '>', $checkIn);
             })
             ->exists();
 
@@ -207,12 +220,12 @@ class BookingController extends Controller
             ]);
 
             // layanan (opsional)
-            $layananId = $request->layanan_id ? (int)$request->layanan_id : 0;
+            $layananId = $request->layanan_id ? (int) $request->layanan_id : 0;
             if ($layananId > 0) {
-                $qty = max(1, (int)($request->layanan_qty ?? 1));
+                $qty = max(1, (int) ($request->layanan_qty ?? 1));
                 $layanan = DB::table('layanan')->where('id', $layananId)->where('aktif', 1)->first();
                 if ($layanan) {
-                    $harga = (int)$layanan->harga;
+                    $harga = (int) $layanan->harga;
 
                     DB::table('booking_layanan')->insert([
                         'booking_id' => $bookingId,
@@ -233,7 +246,7 @@ class BookingController extends Controller
     public function edit($id): View
     {
         $booking = Booking::query()->find($id);
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         if (in_array($booking->status_booking, ['check_out', 'selesai'], true)) {
             return redirect()
@@ -256,7 +269,7 @@ class BookingController extends Controller
         }
 
         $kamar = DB::table('kamar')->orderBy('nomor_kamar')->get();
-        $statusList = $this->statusList;
+        $statusList = $this->editableStatusList($booking);
 
         $layananList = DB::table('layanan')
             ->where('aktif', 1)
@@ -265,9 +278,9 @@ class BookingController extends Controller
 
         $bl = DB::table('booking_layanan')->where('booking_id', $id)->first();
 
-        $selectedLayananId = $bl ? (string)$bl->layanan_id : '';
-        $selectedQty = $bl ? (int)$bl->qty : 0;
-        $layananSubtotal = $bl ? (int)$bl->subtotal : 0;
+        $selectedLayananId = $bl ? (string) $bl->layanan_id : '';
+        $selectedQty = $bl ? (int) $bl->qty : 0;
+        $layananSubtotal = $bl ? (int) $bl->subtotal : 0;
 
         $checkIn = Carbon::parse($booking->tanggal_check_in)->startOfDay();
         $checkOut = Carbon::parse($booking->tanggal_check_out)->startOfDay();
@@ -297,7 +310,7 @@ class BookingController extends Controller
     public function update(Request $request, $id)
     {
         $booking = Booking::query()->find($id);
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         if (in_array($booking->status_booking, ['check_out', 'selesai'], true)) {
             return redirect()
@@ -319,13 +332,15 @@ class BookingController extends Controller
                 ->with('error', $exception->getMessage());
         }
 
+        $allowedStatusList = $this->editableStatusList($booking);
+
         $validator = Validator::make($request->all(), [
             'kamar_id' => ['required', 'exists:kamar,id'],
             'nama_tamu' => ['required', 'string', 'max:100'],
             'no_telp_tamu' => ['nullable', 'string', 'max:20'],
             'tanggal_check_in' => ['required', 'date'],
             'tanggal_check_out' => ['required', 'date', 'after:tanggal_check_in'],
-            'status_booking' => ['required', 'in:' . implode(',', $this->statusList)],
+            'status_booking' => ['required', 'in:'.implode(',', $allowedStatusList)],
             'catatan' => ['nullable', 'string'],
             'source_type' => ['required', 'in:walk_in,telepon_wa,ota,lainnya'],
             'source_detail' => ['nullable', 'string', 'max:100', 'required_if:source_type,ota,lainnya'],
@@ -336,7 +351,7 @@ class BookingController extends Controller
             'layanan_qty' => ['nullable', 'integer', 'min:0', 'max:5'],
         ]);
         $validator->sometimes('layanan_qty', ['required', 'integer', 'min:1', 'max:5'], function ($input) {
-            return !empty($input->layanan_id);
+            return ! empty($input->layanan_id);
         });
         $validator->validate();
 
@@ -359,7 +374,7 @@ class BookingController extends Controller
             ->whereIn('status_booking', ['menunggu', 'check_in'])
             ->where(function ($q) use ($checkIn, $checkOut) {
                 $q->where('tanggal_check_in', '<', $checkOut)
-                  ->where('tanggal_check_out', '>', $checkIn);
+                    ->where('tanggal_check_out', '>', $checkIn);
             })
             ->exists();
 
@@ -387,23 +402,23 @@ class BookingController extends Controller
             ]);
 
             // 2) layanan (1 pilihan)
-            $layananId = $request->layanan_id ? (int)$request->layanan_id : 0;
+            $layananId = $request->layanan_id ? (int) $request->layanan_id : 0;
 
             if ($layananId <= 0) {
                 // tidak ada layanan
                 DB::table('booking_layanan')->where('booking_id', $id)->delete();
             } else {
-                $qty = max(1, (int)($request->layanan_qty ?? 1));
+                $qty = max(1, (int) ($request->layanan_qty ?? 1));
 
                 $layanan = DB::table('layanan')
                     ->where('id', $layananId)
                     ->where('aktif', 1)
                     ->first();
 
-                if (!$layanan) {
+                if (! $layanan) {
                     DB::table('booking_layanan')->where('booking_id', $id)->delete();
                 } else {
-                    $harga = (int)$layanan->harga;
+                    $harga = (int) $layanan->harga;
                     $subtotal = $harga * $qty;
 
                     $exists = DB::table('booking_layanan')->where('booking_id', $id)->exists();
@@ -479,11 +494,12 @@ class BookingController extends Controller
 
     private function normalizeSourceDetail(string $type, ?string $detail): ?string
     {
-        if (!in_array($type, ['ota', 'lainnya'], true)) {
+        if (! in_array($type, ['ota', 'lainnya'], true)) {
             return null;
         }
 
         $clean = preg_replace('/\s+/', ' ', trim((string) $detail));
+
         return $clean !== '' ? $clean : null;
     }
 
@@ -494,14 +510,14 @@ class BookingController extends Controller
         ]);
 
         $booking = DB::table('booking')->where('id', $id)->first();
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         $outLama = $booking->tanggal_check_out;
         $outBaru = $request->tanggal_check_out_baru;
 
         if ($outBaru <= $outLama) {
             return back()->withErrors([
-                'tanggal_check_out_baru' => 'Tanggal check-out baru harus lebih besar dari tanggal sebelumnya.'
+                'tanggal_check_out_baru' => 'Tanggal check-out baru harus lebih besar dari tanggal sebelumnya.',
             ]);
         }
 
@@ -512,13 +528,13 @@ class BookingController extends Controller
             ->whereIn('status_booking', ['menunggu', 'check_in'])
             ->where(function ($q) use ($outLama, $outBaru) {
                 $q->where('tanggal_check_in', '<', $outBaru)
-                  ->where('tanggal_check_out', '>', $outLama);
+                    ->where('tanggal_check_out', '>', $outLama);
             })
             ->exists();
 
         if ($bentrok) {
             return back()->withErrors([
-                'tanggal_check_out_baru' => 'Tidak bisa perpanjang: ada booking lain setelahnya.'
+                'tanggal_check_out_baru' => 'Tidak bisa perpanjang: ada booking lain setelahnya.',
             ]);
         }
 
@@ -556,7 +572,7 @@ class BookingController extends Controller
         ]);
 
         $perpanjangan = DB::table('perpanjangan_booking')->where('id', $id)->first();
-        abort_if(!$perpanjangan, 404);
+        abort_if(! $perpanjangan, 404);
 
         if (($perpanjangan->status_perpanjangan ?? null) !== 'aktif') {
             return back()->withErrors(['alasan_batal' => 'Perpanjangan ini sudah tidak aktif / sudah dibatalkan.']);
@@ -585,7 +601,7 @@ class BookingController extends Controller
         $excludeBookingId = (int) $request->query('exclude_booking_id', 0);
 
         $rows = DB::table('booking')
-            ->where('kamar_id', (int)$kamarId)
+            ->where('kamar_id', (int) $kamarId)
             ->when($excludeBookingId > 0, function ($q) use ($excludeBookingId) {
                 $q->where('id', '!=', $excludeBookingId);
             })
@@ -597,10 +613,12 @@ class BookingController extends Controller
 
         foreach ($rows as $r) {
             $start = new \DateTime($r->tanggal_check_in);
-            $end   = new \DateTime($r->tanggal_check_out);
+            $end = new \DateTime($r->tanggal_check_out);
 
             $periodEnd = (clone $end)->modify('-1 day');
-            if ($periodEnd < $start) continue;
+            if ($periodEnd < $start) {
+                continue;
+            }
 
             $period = new \DatePeriod(
                 $start,
@@ -760,7 +778,7 @@ class BookingController extends Controller
             ->where('booking.id', $id)
             ->first();
 
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         if (($booking->status_booking ?? null) !== 'check_in' || $booking->checkout_at !== null) {
             return back()->withErrors(['checkout' => 'Booking ini tidak bisa checkout.']);
@@ -806,7 +824,7 @@ class BookingController extends Controller
             ->where('id', $id)
             ->first();
 
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         if (($booking->status_booking ?? null) !== 'menunggu') {
             return back()->withErrors(['checkin' => 'Booking ini tidak bisa check-in.']);
@@ -835,7 +853,7 @@ class BookingController extends Controller
             ->where('id', $id)
             ->first();
 
-        abort_if(!$booking, 404);
+        abort_if(! $booking, 404);
 
         if (($booking->status_booking ?? null) !== 'check_out') {
             return back()->withErrors(['selesai' => 'Booking ini belum siap dikonfirmasi selesai.']);
@@ -856,5 +874,4 @@ class BookingController extends Controller
 
         return redirect()->route($this->routePrefix().'.booking.index')->with('success', 'Booking ditandai selesai. Kamar siap dipakai kembali.');
     }
-    
 }

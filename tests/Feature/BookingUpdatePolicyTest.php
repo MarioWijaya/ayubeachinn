@@ -80,8 +80,47 @@ it('blocks update request for selesai booking', function () {
     $this->actingAs($pegawai)
         ->put(route('pegawai.booking.update', $booking->id), $payload)
         ->assertRedirect(route('pegawai.booking.index'))
-        ->assertSessionHas('error', 'Booking sudah selesai dan tidak dapat diedit.');
+        ->assertSessionHas('error', 'Booking tidak dapat diedit pada status ini.');
 
     $booking->refresh();
     expect($booking->status_booking)->toBe('selesai');
+});
+
+it('rejects status batal on update when booking is already check_in', function () {
+    $pegawai = User::factory()->create([
+        'level' => 'pegawai',
+        'status_aktif' => true,
+    ]);
+
+    $kamar = Kamar::factory()->create([
+        'status_kamar' => 'terisi',
+    ]);
+
+    $booking = Booking::factory()->create([
+        'kamar_id' => $kamar->id,
+        'pegawai_id' => $pegawai->id,
+        'status_booking' => 'check_in',
+        'tanggal_check_in' => now()->toDateString(),
+        'tanggal_check_out' => now()->addDay()->toDateString(),
+    ]);
+
+    $payload = [
+        'kamar_id' => $kamar->id,
+        'nama_tamu' => 'Tamu Check In',
+        'tanggal_check_in' => now()->toDateString(),
+        'tanggal_check_out' => now()->addDay()->toDateString(),
+        'status_booking' => 'batal',
+        'catatan' => null,
+        'source_type' => 'walk_in',
+        'source_detail' => null,
+    ];
+
+    $this->actingAs($pegawai)
+        ->from(route('pegawai.booking.edit', $booking->id))
+        ->put(route('pegawai.booking.update', $booking->id), $payload)
+        ->assertRedirect(route('pegawai.booking.edit', $booking->id))
+        ->assertSessionHasErrors(['status_booking']);
+
+    $booking->refresh();
+    expect($booking->status_booking)->toBe('check_in');
 });

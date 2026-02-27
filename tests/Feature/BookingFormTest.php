@@ -49,14 +49,14 @@ it('renders booking edit page for pegawai', function () {
         ->assertSee('id="checkInDate"', false)
         ->assertSee('id="checkOutDate"', false)
         ->assertSee(
-            'data-url-template="' . route('pegawai.booking.tanggal_terpakai', [
+            'data-url-template="'.route('pegawai.booking.tanggal_terpakai', [
                 'kamarId' => '__KAMAR__',
                 'exclude_booking_id' => $bookingId,
-            ]) . '"',
+            ]).'"',
             false
         )
         ->assertSee(
-            'data-rooms-url="' . route('pegawai.booking.kamar_tersedia') . '"',
+            'data-rooms-url="'.route('pegawai.booking.kamar_tersedia').'"',
             false
         );
 });
@@ -93,4 +93,38 @@ it('renders booking detail page for pegawai', function () {
         ->assertSuccessful()
         ->assertSee('Detail Booking')
         ->assertSee('Tamu Detail');
+});
+
+it('hides batal option on booking edit when status is check_in', function () {
+    $user = User::factory()->create([
+        'level' => 'pegawai',
+    ]);
+
+    $kamarId = DB::table('kamar')->insertGetId([
+        'nomor_kamar' => 'C-301',
+        'tipe_kamar' => 'Deluxe',
+        'tarif' => 350000,
+        'kapasitas' => 2,
+        'status_kamar' => 'terisi',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $bookingId = DB::table('booking')->insertGetId([
+        'kamar_id' => $kamarId,
+        'pegawai_id' => $user->id,
+        'nama_tamu' => 'Tamu Checkin',
+        'tanggal_check_in' => now()->toDateString(),
+        'tanggal_check_out' => now()->addDay()->toDateString(),
+        'status_booking' => 'check_in',
+        'catatan' => null,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('pegawai.booking.edit', $bookingId))
+        ->assertSuccessful()
+        ->assertSee('value="check_in"', false)
+        ->assertDontSee('value="batal"', false);
 });

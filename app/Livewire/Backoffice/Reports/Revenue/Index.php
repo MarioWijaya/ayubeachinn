@@ -2,14 +2,13 @@
 
 namespace App\Livewire\Backoffice\Reports\Revenue;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Carbon;
-
 
 #[Layout('layouts.app')]
 class Index extends Component
@@ -17,14 +16,23 @@ class Index extends Component
     use WithPagination;
 
     public string $from = '';
+
     public string $to = '';
+
     public string $downloadType = '';
+
     public bool $showPreviewModal = false;
+
     public bool $previewReady = false;
+
     public array $previewRows = [];
+
     public int $previewCount = 0;
+
     public int $previewGrandTotal = 0;
+
     public bool $isAdmin = false;
+
     public bool $rangeClamped = false;
 
     protected $queryString = [
@@ -38,11 +46,13 @@ class Index extends Component
 
         if ($this->isAdmin) {
             $this->applyAdminRange($this->from !== '' || $this->to !== '');
+
             return;
         }
 
         $this->from = $this->from !== '' ? $this->from : now()->subDays(29)->toDateString();
         $this->to = $this->to !== '' ? $this->to : now()->toDateString();
+        $this->ensureChronologicalRange();
     }
 
     public function updatedFrom(): void
@@ -51,6 +61,8 @@ class Index extends Component
 
         if ($this->isAdmin) {
             $this->applyAdminRange(true);
+        } else {
+            $this->ensureChronologicalRange();
         }
 
         $this->resetPage();
@@ -62,6 +74,8 @@ class Index extends Component
 
         if ($this->isAdmin) {
             $this->applyAdminRange(true);
+        } else {
+            $this->ensureChronologicalRange();
         }
 
         $this->resetPage();
@@ -83,8 +97,9 @@ class Index extends Component
 
     public function requestDownload(string $type): void
     {
-        if (!in_array($type, ['pdf', 'csv'], true)) {
+        if (! in_array($type, ['pdf', 'csv'], true)) {
             $this->addError('downloadType', 'Tipe download tidak valid.');
+
             return;
         }
 
@@ -122,8 +137,9 @@ class Index extends Component
     {
         $this->ensureAdminRange();
 
-        if (!$this->previewReady || !in_array($this->downloadType, ['pdf', 'csv'], true)) {
+        if (! $this->previewReady || ! in_array($this->downloadType, ['pdf', 'csv'], true)) {
             session()->flash('error', 'Silakan lihat preview terlebih dahulu sebelum download.');
+
             return;
         }
 
@@ -141,8 +157,9 @@ class Index extends Component
     {
         $this->ensureAdminRange();
 
-        if (!$this->previewReady) {
+        if (! $this->previewReady) {
             session()->flash('error', 'Silakan klik Preview terlebih dahulu sebelum download.');
+
             return;
         }
 
@@ -167,7 +184,7 @@ class Index extends Component
         $filename = "laporan-pendapatan_{$fromLabel}_sampai_{$toLabel}.pdf";
 
         return response()->streamDownload(
-            fn () => print($pdf->output()),
+            fn () => print ($pdf->output()),
             $filename
         );
     }
@@ -176,8 +193,9 @@ class Index extends Component
     {
         $this->ensureAdminRange();
 
-        if (!$this->previewReady) {
+        if (! $this->previewReady) {
             session()->flash('error', 'Silakan klik Preview terlebih dahulu sebelum download.');
+
             return;
         }
 
@@ -206,7 +224,7 @@ class Index extends Component
             ]);
 
             foreach ($query->cursor() as $row) {
-                $layanan = trim(($row->layanan_nama ?? '') . (($row->layanan_qty ?? 0) > 0 ? ' x' . $row->layanan_qty : ''));
+                $layanan = trim(($row->layanan_nama ?? '').(($row->layanan_qty ?? 0) > 0 ? ' x'.$row->layanan_qty : ''));
 
                 fputcsv($handle, [
                     $row->id,
@@ -244,7 +262,7 @@ class Index extends Component
             )
             ->where('booking.status_booking', 'selesai')
             ->whereNotNull('booking.checkout_at')
-            ->whereBetween('booking.checkout_at', [$this->from . ' 00:00:00', $this->to . ' 23:59:59'])
+            ->whereBetween('booking.checkout_at', [$this->from.' 00:00:00', $this->to.' 23:59:59'])
             ->groupBy('booking.id', 'booking.nama_tamu', 'booking.tanggal_check_in', 'booking.tanggal_check_out', 'booking.total_final', 'kamar.nomor_kamar', 'booking.checkout_at')
             ->orderByDesc('booking.id');
     }
@@ -267,7 +285,7 @@ class Index extends Component
             )
             ->where('booking.status_booking', 'selesai')
             ->whereNotNull('booking.checkout_at')
-            ->whereBetween('booking.checkout_at', [$this->from . ' 00:00:00', $this->to . ' 23:59:59'])
+            ->whereBetween('booking.checkout_at', [$this->from.' 00:00:00', $this->to.' 23:59:59'])
             ->orderByDesc('booking.id');
     }
 
@@ -286,7 +304,7 @@ class Index extends Component
         return (int) DB::table('booking')
             ->where('status_booking', 'selesai')
             ->whereNotNull('checkout_at')
-            ->whereBetween('checkout_at', [$this->from . ' 00:00:00', $this->to . ' 23:59:59'])
+            ->whereBetween('checkout_at', [$this->from.' 00:00:00', $this->to.' 23:59:59'])
             ->sum('total_final');
     }
 
@@ -295,7 +313,7 @@ class Index extends Component
         return (int) DB::table('booking')
             ->where('status_booking', 'selesai')
             ->whereNotNull('checkout_at')
-            ->whereBetween('checkout_at', [$this->from . ' 00:00:00', $this->to . ' 23:59:59'])
+            ->whereBetween('checkout_at', [$this->from.' 00:00:00', $this->to.' 23:59:59'])
             ->count('id');
     }
 
@@ -315,10 +333,21 @@ class Index extends Component
 
     private function ensureAdminRange(): void
     {
-        if (!$this->isAdmin) {
+        if (! $this->isAdmin) {
             return;
         }
 
         $this->applyAdminRange(false);
+    }
+
+    private function ensureChronologicalRange(): void
+    {
+        if ($this->from === '' || $this->to === '') {
+            return;
+        }
+
+        if ($this->to < $this->from) {
+            $this->to = $this->from;
+        }
     }
 }

@@ -55,5 +55,6 @@ it('shows perpanjangan confirmation modal with computed totals', function () {
         ->assertSee('Konfirmasi Perpanjangan')
         ->assertSee('Biaya Tambahan')
         ->assertSee('id="extendModal"', false)
+        ->assertSee('data-old-checkout="2026-01-12"', false)
         ->assertSee('data-current-total="260000"', false);
 });

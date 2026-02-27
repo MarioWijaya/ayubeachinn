@@ -1,12 +1,13 @@
 @php
   $role = auth()->user()->level ?? 'pegawai';
   $routePrefix = in_array($role, ['owner', 'admin', 'pegawai'], true) ? $role : 'pegawai';
+  $oldCheckoutDate = \Illuminate\Support\Carbon::parse($booking->tanggal_check_out)->toDateString();
 @endphp
 
 <div
   class="w-full space-y-6 pb-10"
   data-booking-edit-root
-  data-old-checkout="{{ $booking->tanggal_check_out }}"
+  data-old-checkout="{{ $oldCheckoutDate }}"
   data-harga-per-malam="{{ (int) ($booking->harga_kamar ?? 0) }}"
   data-current-total="{{ (int) ($currentTotal ?? 0) }}"
   data-current-nights="{{ (int) ($currentNights ?? 0) }}"
@@ -966,9 +967,22 @@
         }).format(Number(value || 0));
 
       const parseYmd = (value) => {
-        if (!value) return null;
-        const [y, m, d] = value.split('-').map(Number);
-        return new Date(Date.UTC(y, m - 1, d));
+        if (!value) {
+          return null;
+        }
+
+        const matched = String(value).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!matched) {
+          return null;
+        }
+
+        const parsed = new Date(Date.UTC(
+          Number(matched[1]),
+          Number(matched[2]) - 1,
+          Number(matched[3]),
+        ));
+
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
       };
 
       const oldCheckout = root.dataset.oldCheckout;
@@ -1010,8 +1024,18 @@
       });
 
       form?.addEventListener('submit', (event) => {
-        if (!oldCheckout || !checkOutInput.value) return;
-        if (checkOutInput.value > oldCheckout) {
+        if (!oldCheckout || !checkOutInput.value) {
+          return;
+        }
+
+        const oldDate = parseYmd(oldCheckout);
+        const newDate = parseYmd(checkOutInput.value);
+
+        if (!oldDate || !newDate) {
+          return;
+        }
+
+        if (newDate.getTime() > oldDate.getTime()) {
           event.preventDefault();
           openExtendModal(checkOutInput.value);
         }
