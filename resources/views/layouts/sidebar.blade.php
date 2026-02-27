@@ -6,8 +6,8 @@
 <div x-data="{ open: false }" class="min-h-screen bg-slate-50">
 
   {{-- Topbar (mobile) --}}
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200 lg:hidden">
-    <div class="flex items-center justify-between px-4 py-3">
+  <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur lg:hidden">
+    <div class="flex items-center justify-between px-4 py-3 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
       <button
         type="button"
         @click="open = true"

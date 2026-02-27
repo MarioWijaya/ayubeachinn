@@ -4,8 +4,8 @@
     'rightSlot' => null,
 ])
 
-<div class="sticky top-0 z-40 -mx-4 border-b border-slate-200 bg-white/80 px-2 shadow-sm backdrop-blur lg:-mx-8 lg:px-8">
-  <div class="flex flex-col gap-2 py-2 lg:h-16 lg:flex-row lg:items-center lg:justify-between lg:py-0">
+<div class="relative z-30 -mx-4 border-b border-slate-200 bg-white/80 px-2 shadow-sm backdrop-blur lg:sticky lg:top-0 lg:z-40 lg:-mx-8 lg:px-8">
+  <div class="flex flex-col gap-2 py-2.5 lg:h-16 lg:flex-row lg:items-center lg:justify-between lg:py-0">
     <div wire:ignore class="inline-flex h-9 w-fit max-w-full items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 text-xs font-semibold text-slate-700 shadow-sm">
       <span
         id="realtimeClock"

@@ -23,8 +23,8 @@ window.flatpickr = flatpickr;
 
 // =================== LUCIDE ===================
 const lucideCdnSources = [
-  "https://unpkg.com/lucide@latest/dist/umd/lucide.min.js",
-  "https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js",
+  "https://unpkg.com/lucide@0.563.0/dist/umd/lucide.min.js",
+  "https://cdn.jsdelivr.net/npm/lucide@0.563.0/dist/umd/lucide.min.js",
 ];
 
 let lucideLoadPromise = null;
@@ -82,9 +82,30 @@ const ensureLucideLoaded = () => {
 };
 
 const refreshIcons = () => {
-  if (!window.lucide?.createIcons) return false;
-  window.lucide.createIcons();
-  return true;
+  const lucide = window.lucide ?? window.lucide?.default;
+  if (!lucide) {
+    return false;
+  }
+
+  try {
+    if (typeof lucide.createIcons === "function") {
+      lucide.createIcons();
+      return true;
+    }
+  } catch {
+    // noop
+  }
+
+  try {
+    if (typeof lucide.replace === "function") {
+      lucide.replace();
+      return true;
+    }
+  } catch {
+    // noop
+  }
+
+  return false;
 };
 
 const scheduleLucideRefresh = () => {

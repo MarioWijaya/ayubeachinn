@@ -147,7 +147,7 @@ $barCls = $tersedia === 0
           <label class="block text-xs font-semibold text-slate-600">Tipe kamar</label>
           <div class="relative mt-2">
             <select
-              class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
+              class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-11 text-sm
                      focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
               wire:model.live="tipe"
             >
@@ -158,7 +158,7 @@ $barCls = $tersedia === 0
                 </option>
               @endforeach
             </select>
-            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
@@ -169,7 +169,7 @@ $barCls = $tersedia === 0
           <label class="block text-xs font-semibold text-slate-600">Status kamar</label>
           <div class="relative mt-2">
             <select
-              class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
+              class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-11 text-sm
                      focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
               wire:model.live="statusKamar"
             >
@@ -178,7 +178,7 @@ $barCls = $tersedia === 0
                 <option value="{{ $s }}">{{ $statusKamarLabel($s) }}</option>
               @endforeach
             </select>
-            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+            <span class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>

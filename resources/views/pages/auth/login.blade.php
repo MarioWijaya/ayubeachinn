@@ -22,8 +22,8 @@
           <div class="absolute inset-0 flex items-end justify-center">
             <div class="w-full bg-gradient-to-t from-black/50 via-black/50 to-transparent absolute bottom-0 p-6 max-md:hidden">
               <h1 class="text-white text-2xl font-semibold">Selamat Datang Kembali</h1>
-              <p class="text-slate-300 text-[15px] font-medium mt-3 leading-relaxed">
-                Akses Sistem Manajemen Booking Hotel
+              <p class="text-slate-300 text-[13px] font-medium mt-3 leading-relaxed">
+                masuk untuk mengakses sistem manejemn booking hotel
               </p>
             </div>
           </div>
@@ -41,7 +41,6 @@
               alt="Ayu Beach Inn"
               class="mx-auto mb-5 w-full max-w-[220px] object-contain"
             >
-            <h3 class="text-4xl font-bold text-slate-900">Masuk</h3>
           </div>
 
           @if ($errors->any())

@@ -30,7 +30,6 @@
   <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition">
     <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
       <div class="text-sm font-semibold text-slate-900">Informasi Kamar</div>
-      <div class="mt-0.5 text-xs text-slate-500">Pastikan nomor kamar unik.</div>
     </div>
 
     <form method="POST" action="{{ route('admin.kamar.store') }}" class="space-y-6 p-5 sm:p-6">

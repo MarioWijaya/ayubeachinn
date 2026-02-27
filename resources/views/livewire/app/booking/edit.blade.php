@@ -618,6 +618,27 @@
       document.head.appendChild(script);
     });
 
+    const renderLucideIcons = () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    };
+
+    const bindLucideHooks = () => {
+      if (window.__bookingEditLucideHookBound) {
+        return;
+      }
+
+      window.__bookingEditLucideHookBound = true;
+
+      document.addEventListener('livewire:navigated', renderLucideIcons);
+      document.addEventListener('livewire:initialized', () => {
+        if (window.Livewire) {
+          Livewire.hook('message.processed', renderLucideIcons);
+        }
+      });
+    };
+
     const initBookingEdit = () => {
       const root = document.querySelector('[data-booking-edit-root]');
       const checkInInput = document.getElementById('checkInDate');
@@ -930,6 +951,7 @@
       initCheckOutFp();
       bindHandlers();
       refreshKamarTersedia();
+      renderLucideIcons();
 
       const form = root.querySelector('[data-booking-edit-form]');
       const modal = document.getElementById('extendModal');
@@ -998,6 +1020,7 @@
 
     window.bootBookingEdit = () => window.ensureFlatpickrReady(initBookingEdit);
 
+    bindLucideHooks();
     document.addEventListener('DOMContentLoaded', window.bootBookingEdit);
     document.addEventListener('livewire:navigated', window.bootBookingEdit);
   })();

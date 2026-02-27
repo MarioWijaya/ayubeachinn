@@ -3,7 +3,7 @@
   $routePrefix = in_array($role, ['owner', 'admin', 'pegawai'], true) ? $role : 'pegawai';
 @endphp
 
-<div class="mx-auto w-full max-w-6xl space-y-6 pb-10">
+<div class="w-full space-y-6 pb-10">
 
   <x-page-header
     title="Tambah Booking"
@@ -568,6 +568,27 @@
     let fp = null;
     let availabilityRequestToken = 0;
 
+    function renderLucideIcons() {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+
+    function bindLucideHooks() {
+      if (window.__bookingCreateLucideHookBound) {
+        return;
+      }
+
+      window.__bookingCreateLucideHookBound = true;
+
+      document.addEventListener('livewire:navigated', renderLucideIcons);
+      document.addEventListener('livewire:initialized', () => {
+        if (window.Livewire) {
+          Livewire.hook('message.processed', renderLucideIcons);
+        }
+      });
+    }
+
     function setTanggalRangeValue(value) {
       const hidden = document.getElementById('tanggalRangeValue');
       if (!hidden) return;
@@ -877,8 +898,10 @@
     function initBookingCreateFlow() {
       initTanggalPicker();
       bindTypeRoomEvents();
+      renderLucideIcons();
     }
 
+    bindLucideHooks();
     document.addEventListener('DOMContentLoaded', initBookingCreateFlow);
     document.addEventListener('livewire:navigated', initBookingCreateFlow);
     initBookingCreateFlow();

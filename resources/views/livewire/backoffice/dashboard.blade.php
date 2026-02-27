@@ -18,7 +18,7 @@
         <div class="relative min-w-0 w-full md:col-span-1 lg:w-auto">
           <select
             data-preset-select
-            class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
+            class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-11 text-sm font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 md:text-xs"
           >
             <option value="all">Semua</option>
             <option value="today">Hari ini</option>
@@ -28,7 +28,7 @@
             <option value="month">Bulan ini</option>
             <option value="custom" hidden>Kustom</option>
           </select>
-          <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+          <span class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>
@@ -166,7 +166,7 @@
         >
         <div class="relative">
           <select
-            class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-xs font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
+            class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-11 text-xs font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
             data-booking-filter
           >
             <option value="">Semua status</option>
@@ -176,7 +176,7 @@
             <option value="selesai">Selesai</option>
             <option value="batal">Batal</option>
           </select>
-          <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+          <span class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-slate-400">
             <i data-lucide="chevron-down" class="h-4 w-4"></i>
           </span>
         </div>
