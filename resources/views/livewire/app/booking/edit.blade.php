@@ -475,10 +475,10 @@
   </div>
 
   {{-- MODAL KONFIRMASI PERPANJANG (via edit checkout) --}}
-  <div id="extendModal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
-    <div class="absolute inset-0 bg-black/40" data-extend-close></div>
+  <div id="extendModal" class="fixed inset-0 z-50 hidden items-center justify-center">
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-[1px]" data-extend-close></div>
 
-    <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+    <div class="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
       <div class="flex items-start justify-between gap-3">
         <div>
           <div class="text-sm font-semibold text-slate-900">Konfirmasi Perpanjangan</div>
@@ -528,10 +528,10 @@
   </div>
 
   {{-- MODAL KONFIRMASI TOTAL SAAT GANTI KAMAR + TAMBAH LAYANAN --}}
-  <div id="roomServicePreviewModal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
-    <div class="absolute inset-0 bg-black/40" data-room-service-close></div>
+  <div id="roomServicePreviewModal" class="fixed inset-0 z-50 hidden items-center justify-center">
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-[1px]" data-room-service-close></div>
 
-    <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+    <div class="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
       <div class="flex items-start justify-between gap-3">
         <div>
           <div class="text-sm font-semibold text-slate-900">Konfirmasi Total Booking Baru</div>

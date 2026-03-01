@@ -180,7 +180,7 @@
             class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-11 text-xs font-semibold leading-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
             data-booking-filter
           >
-            <option value="">Semua status</option>
+            <option value="">Semua</option>
             <option value="menunggu">Menunggu</option>
             <option value="check_in">Check-in</option>
             <option value="check_out">Check-out</option>

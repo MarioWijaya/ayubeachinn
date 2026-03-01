@@ -69,7 +69,7 @@
                      focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
               wire:model.live="status"
             >
-              <option value="">Semua status</option>
+              <option value="">Semua</option>
               <option value="tersedia">Tersedia</option>
               <option value="terisi">Terisi</option>
               <option value="perbaikan">Perbaikan</option>
