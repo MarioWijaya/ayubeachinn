@@ -46,6 +46,10 @@ it('renders booking edit page for pegawai', function () {
         ->get(route('pegawai.booking.edit', $bookingId))
         ->assertSuccessful()
         ->assertSee('Ubah Booking')
+        ->assertSee('Tipe Kamar')
+        ->assertSee('Nomor Kamar')
+        ->assertSee('id="tipeKamarSelect"', false)
+        ->assertSee('id="kamarSelect"', false)
         ->assertSee('id="checkInDate"', false)
         ->assertSee('id="checkOutDate"', false)
         ->assertSee(
@@ -126,5 +130,6 @@ it('hides batal option on booking edit when status is check_in', function () {
         ->get(route('pegawai.booking.edit', $bookingId))
         ->assertSuccessful()
         ->assertSee('value="check_in"', false)
-        ->assertDontSee('value="batal"', false);
+        ->assertDontSee('value="batal"', false)
+        ->assertSee('Kamar tidak dapat diubah ketika status booking sudah check-in.');
 });

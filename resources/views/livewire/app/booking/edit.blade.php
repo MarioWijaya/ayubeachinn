@@ -2,6 +2,16 @@
   $role = auth()->user()->level ?? 'pegawai';
   $routePrefix = in_array($role, ['owner', 'admin', 'pegawai'], true) ? $role : 'pegawai';
   $oldCheckoutDate = \Illuminate\Support\Carbon::parse($booking->tanggal_check_out)->toDateString();
+  $selectedKamarId = (int) old('kamar_id', $booking->kamar_id);
+  $selectedKamar = collect($kamar)->firstWhere('id', $selectedKamarId);
+  $selectedTipeKamar = (string) ($selectedKamar->tipe_kamar ?? '');
+  $isRoomLocked = $booking->status_booking === 'check_in';
+  $tipeKamarOptions = collect($kamar)
+    ->pluck('tipe_kamar')
+    ->filter(fn ($tipe) => filled($tipe))
+    ->unique()
+    ->sort()
+    ->values();
 @endphp
 
 <div
@@ -13,6 +23,7 @@
   data-current-nights="{{ (int) ($currentNights ?? 0) }}"
   data-rooms-url="{{ route($routePrefix.'.booking.kamar_tersedia') }}"
   data-exclude-booking-id="{{ (int) $booking->id }}"
+  data-room-locked="{{ $isRoomLocked ? '1' : '0' }}"
 >
   <x-page-header
     title="Ubah Booking"
@@ -65,30 +76,70 @@
       @csrf
       @method('PUT')
 
-      {{-- GRID: KAMAR + NAMA --}}
+      {{-- GRID: TIPE KAMAR + NOMOR + DATA TAMU --}}
       <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
-          <label class="block text-sm font-semibold text-slate-700">Kamar</label>
+          <label class="block text-sm font-semibold text-slate-700">Tipe Kamar</label>
           <div class="relative mt-2">
             <select
-              id="kamarSelect"
-              name="kamar_id"
+              id="tipeKamarSelect"
+              data-selected-type="{{ $selectedTipeKamar }}"
+              @disabled($isRoomLocked)
               class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
-                     focus:outline-none focus:ring-2 focus:ring-[#854836]/25 focus:border-[#854836]
+                     focus:outline-none focus:ring-2 focus:ring-[#854836]/25 focus:border-[#854836] disabled:cursor-not-allowed disabled:bg-slate-100
                      transition"
             >
-              @foreach($kamar as $k)
-                <option value="{{ $k->id }}" {{ (int)old('kamar_id', $booking->kamar_id) === (int)$k->id ? 'selected' : '' }}>
-                  {{ $k->nomor_kamar }} ({{ $k->tipe_kamar }})
-                </option>
-              @endforeach
+              @if($isRoomLocked)
+                <option value="{{ $selectedTipeKamar }}">{{ $selectedTipeKamar }}</option>
+              @else
+                @foreach($tipeKamarOptions as $tipeKamar)
+                  <option value="{{ $tipeKamar }}" {{ $selectedTipeKamar === $tipeKamar ? 'selected' : '' }}>
+                    {{ $tipeKamar }}
+                  </option>
+                @endforeach
+              @endif
             </select>
             <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </span>
           </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700">Nomor Kamar</label>
+          <div class="relative mt-2">
+            <select
+              id="kamarSelect"
+              name="kamar_id"
+              data-selected-room="{{ $selectedKamarId }}"
+              @disabled($isRoomLocked)
+              class="w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-[#854836]/25 focus:border-[#854836] disabled:cursor-not-allowed disabled:bg-slate-100
+                     transition"
+            >
+              @if($isRoomLocked && $selectedKamar)
+                <option value="{{ $selectedKamar->id }}">{{ $selectedKamar->nomor_kamar }}</option>
+              @else
+                @foreach($kamar as $k)
+                  <option value="{{ $k->id }}" {{ $selectedKamarId === (int) $k->id ? 'selected' : '' }}>
+                    {{ $k->nomor_kamar }}
+                  </option>
+                @endforeach
+              @endif
+            </select>
+            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+            </span>
+          </div>
+          @if($isRoomLocked)
+            <input type="hidden" name="kamar_id" value="{{ $selectedKamarId }}">
+          @endif
           @error('kamar_id') <div class="mt-1 text-sm text-rose-600">{{ $message }}</div> @enderror
-          <div id="kamarAvailabilityHint" class="mt-1 text-xs text-slate-500"></div>
+          <div id="kamarAvailabilityHint" class="mt-1 text-xs text-slate-500">
+            @if($isRoomLocked)
+              Kamar tidak dapat diubah ketika status booking sudah check-in.
+            @endif
+          </div>
         </div>
 
         <div>
@@ -644,15 +695,17 @@
       const root = document.querySelector('[data-booking-edit-root]');
       const checkInInput = document.getElementById('checkInDate');
       const checkOutInput = document.getElementById('checkOutDate');
+      const tipeKamarSelect = document.getElementById('tipeKamarSelect');
       const kamarSelect = document.getElementById('kamarSelect');
       const kamarAvailabilityHint = document.getElementById('kamarAvailabilityHint');
       const sourceTypeSelect = document.getElementById('sourceTypeSelect');
       const sourceDetailWrap = document.getElementById('sourceDetailWrap');
       const sourceDetailInput = document.getElementById('sourceDetailInput');
-      const roomsUrl = root.dataset.roomsUrl || '';
-      const excludeBookingId = parseInt(root.dataset.excludeBookingId || '0', 10);
+      const roomsUrl = root?.dataset.roomsUrl || '';
+      const excludeBookingId = parseInt(root?.dataset.excludeBookingId || '0', 10);
+      const isRoomLocked = root?.dataset.roomLocked === '1';
 
-      if (!root || !checkInInput || !checkOutInput || !kamarSelect) {
+      if (!root || !checkInInput || !checkOutInput || !tipeKamarSelect || !kamarSelect) {
         return;
       }
 
@@ -660,6 +713,9 @@
       let checkOutFp = null;
       let openLock = false;
       let initialized = false;
+      let availableRooms = [];
+      let pendingPreferredType = null;
+      let pendingPreferredRoom = null;
 
       const formatDate = (date) => flatpickr.formatDate(date, 'Y-m-d');
       const parseDate = (value) => flatpickr.parseDate(value, 'Y-m-d');
@@ -727,7 +783,97 @@
         kamarAvailabilityHint.classList.toggle('text-slate-500', !isError);
       };
 
+      const normalizedType = (value) => String(value || '').trim().toLowerCase();
+
+      const collectTypeOptions = (rooms) => {
+        const typeMap = new Map();
+
+        rooms.forEach((room) => {
+          const key = normalizedType(room.tipe_kamar);
+          if (!key || typeMap.has(key)) {
+            return;
+          }
+
+          typeMap.set(key, String(room.tipe_kamar));
+        });
+
+        return Array.from(typeMap.values()).sort((a, b) => a.localeCompare(b));
+      };
+
+      const applyTypeOptions = (rooms, preferredType = '') => {
+        const types = collectTypeOptions(rooms);
+        const currentType = preferredType || tipeKamarSelect.value || tipeKamarSelect.dataset.selectedType || '';
+
+        tipeKamarSelect.innerHTML = '';
+
+        if (types.length === 0) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = 'Tidak ada tipe kamar tersedia';
+          tipeKamarSelect.appendChild(option);
+          tipeKamarSelect.value = '';
+          tipeKamarSelect.disabled = true;
+
+          return '';
+        }
+
+        types.forEach((typeName) => {
+          const option = document.createElement('option');
+          option.value = typeName;
+          option.textContent = typeName;
+          tipeKamarSelect.appendChild(option);
+        });
+
+        tipeKamarSelect.disabled = false;
+
+        const selectedType = types.find((typeName) => normalizedType(typeName) === normalizedType(currentType)) ?? types[0];
+        tipeKamarSelect.value = selectedType;
+        tipeKamarSelect.dataset.selectedType = selectedType;
+
+        return selectedType;
+      };
+
+      const applyRoomOptionsByType = (rooms, typeName, preferredRoom = '') => {
+        const matchingRooms = rooms.filter((room) => normalizedType(room.tipe_kamar) === normalizedType(typeName));
+
+        kamarSelect.innerHTML = '';
+
+        if (matchingRooms.length === 0) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = 'Tidak ada nomor kamar tersedia';
+          kamarSelect.appendChild(option);
+          kamarSelect.value = '';
+          kamarSelect.disabled = true;
+          kamarSelect.dataset.selectedRoom = '';
+
+          return false;
+        }
+
+        matchingRooms.forEach((room) => {
+          const option = document.createElement('option');
+          option.value = String(room.id);
+          option.textContent = String(room.nomor_kamar);
+          kamarSelect.appendChild(option);
+        });
+
+        kamarSelect.disabled = false;
+
+        const selectedRoom = matchingRooms.find((room) => String(room.id) === String(preferredRoom))
+          ? String(preferredRoom)
+          : String(matchingRooms[0].id);
+
+        kamarSelect.value = selectedRoom;
+        kamarSelect.dataset.selectedRoom = selectedRoom;
+
+        return selectedRoom === String(preferredRoom);
+      };
+
       const refreshKamarTersedia = async () => {
+        if (isRoomLocked) {
+          return;
+        }
+
         const checkInValue = checkInInput.value;
         const checkOutValue = checkOutInput.value;
 
@@ -744,7 +890,17 @@
           params.set('exclude_booking_id', String(excludeBookingId));
         }
 
-        const currentValue = kamarSelect.value;
+        const forcedType = pendingPreferredType;
+        const forcedRoom = pendingPreferredRoom;
+        pendingPreferredType = null;
+        pendingPreferredRoom = null;
+
+        const currentRoomValue = forcedRoom !== null
+          ? String(forcedRoom)
+          : (kamarSelect.value || kamarSelect.dataset.selectedRoom || '');
+        const currentTypeValue = forcedType !== null
+          ? String(forcedType)
+          : (tipeKamarSelect.value || tipeKamarSelect.dataset.selectedType || '');
 
         try {
           const response = await fetch(`${roomsUrl}?${params.toString()}`, {
@@ -757,28 +913,19 @@
 
           const json = await response.json();
           const rooms = Array.isArray(json.rooms) ? json.rooms : [];
+          availableRooms = rooms;
 
           if (rooms.length === 0) {
-            kamarSelect.innerHTML = '<option value="">Tidak ada kamar tersedia pada tanggal tersebut</option>';
-            kamarSelect.value = '';
-            kamarSelect.disabled = true;
+            applyTypeOptions([], '');
+            applyRoomOptionsByType([], '', '');
             setKamarHint('Semua kamar sudah terpakai pada rentang tanggal ini.', true);
             return;
           }
 
-          kamarSelect.disabled = false;
-          kamarSelect.innerHTML = '';
-          rooms.forEach((room) => {
-            const option = document.createElement('option');
-            option.value = String(room.id);
-            option.textContent = `${room.nomor_kamar} (${room.tipe_kamar})`;
-            kamarSelect.appendChild(option);
-          });
+          const selectedType = applyTypeOptions(rooms, currentTypeValue);
+          const stillAvailable = applyRoomOptionsByType(rooms, selectedType, currentRoomValue);
 
-          const stillAvailable = rooms.some((room) => String(room.id) === String(currentValue));
-          kamarSelect.value = stillAvailable ? currentValue : String(rooms[0].id);
-
-          if (!stillAvailable && currentValue !== '') {
+          if (!stillAvailable && currentRoomValue !== '') {
             setKamarHint('Kamar sebelumnya tidak tersedia di rentang tanggal ini. Silakan pilih kamar lain.', true);
           } else {
             setKamarHint('');
@@ -926,10 +1073,22 @@
           }
         });
 
-        kamarSelect.addEventListener('change', () => {
-          initCheckInFp();
-          initCheckOutFp();
-        });
+        if (!isRoomLocked) {
+          tipeKamarSelect.addEventListener('change', () => {
+            pendingPreferredType = tipeKamarSelect.value || '';
+            pendingPreferredRoom = '';
+            kamarSelect.dataset.selectedRoom = '';
+            kamarSelect.value = '';
+            setKamarHint('');
+            refreshKamarTersediaDebounced();
+          });
+
+          kamarSelect.addEventListener('change', () => {
+            kamarSelect.dataset.selectedRoom = kamarSelect.value || '';
+            initCheckInFp();
+            initCheckOutFp();
+          });
+        }
         checkInInput.addEventListener('change', refreshKamarTersediaDebounced);
         checkOutInput.addEventListener('change', refreshKamarTersediaDebounced);
 
@@ -951,7 +1110,9 @@
       initCheckInFp();
       initCheckOutFp();
       bindHandlers();
-      refreshKamarTersedia();
+      if (!isRoomLocked) {
+        refreshKamarTersedia();
+      }
       renderLucideIcons();
 
       const form = root.querySelector('[data-booking-edit-form]');

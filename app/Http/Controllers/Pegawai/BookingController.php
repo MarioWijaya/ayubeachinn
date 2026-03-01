@@ -355,6 +355,12 @@ class BookingController extends Controller
         });
         $validator->validate();
 
+        if ($booking->status_booking === 'check_in' && (int) $request->kamar_id !== (int) $booking->kamar_id) {
+            return back()
+                ->withErrors(['kamar_id' => 'Kamar tidak dapat diubah saat booking sudah check-in.'])
+                ->withInput();
+        }
+
         $oldKamarId = (int) $booking->kamar_id;
         $oldCheckOut = $booking->tanggal_check_out;
         $statusUpdatedAt = $booking->status_updated_at;
