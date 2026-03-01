@@ -52,6 +52,7 @@
               data-filter-end
               class="h-11 min-w-0 max-w-full w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm font-semibold leading-normal text-slate-700 [color-scheme:light] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30"
               aria-label="Sampai tanggal"
+              min="{{ $from }}"
             >
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
               <i data-lucide="calendar-days" class="h-4 w-4"></i>
@@ -358,6 +359,14 @@
         url.searchParams.delete('preset');
       }
       window.history.replaceState({}, '', url.toString());
+    };
+
+    const syncEndDateConstraint = () => {
+      const startValue = startInput.value || '';
+      endInput.min = startValue;
+      if (startValue && endInput.value && endInput.value < startValue) {
+        endInput.value = startValue;
+      }
     };
 
     const destroyCharts = () => {
@@ -730,6 +739,7 @@
       if (!startDate || !endDate) {
         startInput.value = payload.range.start_date;
         endInput.value = payload.range.end_date;
+        syncEndDateConstraint();
         presetSelect.value = preset ?? '';
         updateUrl(payload.range.start_date, payload.range.end_date, preset);
       }
@@ -750,6 +760,7 @@
         if (!startDate || !endDate) {
           startInput.value = '';
           endInput.value = '';
+          syncEndDateConstraint();
           updateUrl(null, null, preset);
           fetchData(null, null, preset, false);
           return;
@@ -757,11 +768,13 @@
 
         startInput.value = startDate;
         endInput.value = endDate;
+        syncEndDateConstraint();
         updateUrl(startDate, endDate, preset);
         fetchData(startDate, endDate, preset, false);
       });
 
       const handleCustomChange = () => {
+        syncEndDateConstraint();
         if (!startInput.value || !endInput.value) return;
         presetSelect.value = 'custom';
         updateUrl(startInput.value, endInput.value, 'custom');
@@ -778,6 +791,7 @@
         presetSelect.value = 'all';
         startInput.value = '';
         endInput.value = '';
+        syncEndDateConstraint();
         updateUrl(null, null, 'all');
         fetchData(null, null, 'all', false);
       });
@@ -791,12 +805,14 @@
     if (urlStart && urlEnd) {
       startInput.value = urlStart;
       endInput.value = urlEnd;
+      syncEndDateConstraint();
       presetSelect.value = urlPreset || 'custom';
       updateUrl(urlStart, urlEnd, urlPreset || 'custom');
       fetchData(urlStart, urlEnd, urlPreset || 'custom');
     } else {
       startInput.value = '';
       endInput.value = '';
+      syncEndDateConstraint();
       presetSelect.value = urlPreset || 'all';
       updateUrl(null, null, urlPreset || 'all');
       fetchData(null, null, urlPreset || 'all');

@@ -218,6 +218,7 @@ $barCls = $tersedia === 0
                      [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0
                      focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
               wire:model.live="checkTo"
+              min="{{ $checkFrom }}"
             >
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
               <i data-lucide="calendar-days" class="h-4 w-4"></i>

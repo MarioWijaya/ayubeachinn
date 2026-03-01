@@ -4,7 +4,6 @@ namespace App\Livewire\Backoffice\Kamar;
 
 use App\Models\Kamar;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -20,9 +19,13 @@ class Index extends Component
     protected string $paginationTheme = 'tailwind';
 
     public string $q = '';
+
     public string $status = '';
+
     public string $checkFrom = '';
+
     public string $checkTo = '';
+
     public string $quickRange = '';
 
     protected $queryString = [
@@ -38,6 +41,7 @@ class Index extends Component
         $today = now()->toDateString();
         $this->checkFrom = $this->checkFrom !== '' ? $this->checkFrom : $today;
         $this->checkTo = $this->checkTo !== '' ? $this->checkTo : $today;
+        $this->ensureChronologicalRange();
         if ($this->quickRange === '' && $this->checkFrom === $today && $this->checkTo === $today) {
             $this->quickRange = 'today';
         }
@@ -55,12 +59,14 @@ class Index extends Component
 
     public function updatedCheckFrom(): void
     {
+        $this->ensureChronologicalRange();
         $this->quickRange = '';
         $this->resetPage();
     }
 
     public function updatedCheckTo(): void
     {
+        $this->ensureChronologicalRange();
         $this->quickRange = '';
         $this->resetPage();
     }
@@ -95,6 +101,17 @@ class Index extends Component
         $this->checkTo = $to;
         $this->quickRange = $range;
         $this->resetPage();
+    }
+
+    private function ensureChronologicalRange(): void
+    {
+        if ($this->checkFrom === '' || $this->checkTo === '') {
+            return;
+        }
+
+        if ($this->checkTo < $this->checkFrom) {
+            $this->checkTo = $this->checkFrom;
+        }
     }
 
     public function render(): View

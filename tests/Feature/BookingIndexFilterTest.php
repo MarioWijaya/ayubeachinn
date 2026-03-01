@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 
 beforeEach(function () {
-    if (!Schema::hasTable('layanan')) {
+    if (! Schema::hasTable('layanan')) {
         Schema::create('layanan', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
@@ -19,7 +19,7 @@ beforeEach(function () {
         });
     }
 
-    if (!Schema::hasTable('booking_layanan')) {
+    if (! Schema::hasTable('booking_layanan')) {
         Schema::create('booking_layanan', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('booking_id');
@@ -194,6 +194,18 @@ it('sets date filters using quick range actions', function () {
         ->call('setQuickRange', 'month')
         ->assertSet('from', '2026-01-28')
         ->assertSet('to', '2026-02-26');
+
+    Carbon::setTestNow();
+});
+
+it('prevents to date from being earlier than from date in booking filter', function () {
+    Carbon::setTestNow('2026-02-04');
+
+    Livewire::test(PegawaiBookingIndex::class)
+        ->set('to', '2026-02-10')
+        ->set('from', '2026-02-15')
+        ->assertSet('to', '2026-02-15')
+        ->assertSee('min="2026-02-15"', false);
 
     Carbon::setTestNow();
 });

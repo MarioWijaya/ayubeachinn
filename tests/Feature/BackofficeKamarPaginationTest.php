@@ -55,3 +55,11 @@ it('filters kamar by search and status', function () {
         ->assertSee('Deluxe')
         ->assertDontSee('Superior');
 });
+
+it('prevents check to date from being earlier than check from date in kamar filter', function () {
+    Livewire::test(KamarIndex::class)
+        ->set('checkTo', '2026-03-01')
+        ->set('checkFrom', '2026-03-05')
+        ->assertSet('checkTo', '2026-03-05')
+        ->assertSee('min="2026-03-05"', false);
+});

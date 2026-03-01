@@ -20,5 +20,8 @@ test('authenticated users can visit the dashboard', function () {
             'Okupansi',
             'Range filter',
             'Distribusi Status',
-        ]);
+        ])
+        ->assertSee('data-filter-end', false)
+        ->assertSee('const syncEndDateConstraint = () => {', false)
+        ->assertSee('endInput.min = startValue', false);
 });

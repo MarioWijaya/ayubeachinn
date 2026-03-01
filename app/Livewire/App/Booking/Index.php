@@ -16,8 +16,11 @@ class Index extends Component
     use WithPagination;
 
     public string $q = '';
+
     public string $status = '';
+
     public string $from = '';
+
     public string $to = '';
 
     protected $queryString = [
@@ -33,6 +36,8 @@ class Index extends Component
             $this->from = now()->toDateString();
             $this->to = now()->addDays(29)->toDateString();
         }
+
+        $this->ensureChronologicalRange();
     }
 
     public function updatedQ(): void
@@ -47,11 +52,13 @@ class Index extends Component
 
     public function updatedFrom(): void
     {
+        $this->ensureChronologicalRange();
         $this->resetPage();
     }
 
     public function updatedTo(): void
     {
+        $this->ensureChronologicalRange();
         $this->resetPage();
     }
 
@@ -87,6 +94,17 @@ class Index extends Component
         $this->from = $today;
         $this->to = $to;
         $this->resetPage();
+    }
+
+    private function ensureChronologicalRange(): void
+    {
+        if ($this->from === '' || $this->to === '') {
+            return;
+        }
+
+        if ($this->to < $this->from) {
+            $this->to = $this->from;
+        }
     }
 
     public function render(): View

@@ -14,9 +14,13 @@ class Dashboard extends Component
     use WithPagination;
 
     public string $q = '';
+
     public string $tipe = '';
+
     public string $statusKamar = '';
+
     public string $checkFrom = '';
+
     public string $checkTo = '';
 
     protected $queryString = [
@@ -32,6 +36,7 @@ class Dashboard extends Component
         $today = now()->toDateString();
         $this->checkFrom = $this->checkFrom !== '' ? $this->checkFrom : $today;
         $this->checkTo = $this->checkTo !== '' ? $this->checkTo : $today;
+        $this->ensureChronologicalRange();
     }
 
     public function updatedQ(): void
@@ -51,11 +56,13 @@ class Dashboard extends Component
 
     public function updatedCheckFrom(): void
     {
+        $this->ensureChronologicalRange();
         $this->resetPage();
     }
 
     public function updatedCheckTo(): void
     {
+        $this->ensureChronologicalRange();
         $this->resetPage();
     }
 
@@ -79,6 +86,17 @@ class Dashboard extends Component
     public function applyFilters(): void
     {
         $this->resetPage();
+    }
+
+    private function ensureChronologicalRange(): void
+    {
+        if ($this->checkFrom === '' || $this->checkTo === '') {
+            return;
+        }
+
+        if ($this->checkTo < $this->checkFrom) {
+            $this->checkTo = $this->checkFrom;
+        }
     }
 
     public function render(): View
@@ -135,8 +153,8 @@ class Dashboard extends Component
 
         if ($this->q !== '') {
             $kamarQ->where(function ($w) {
-                $w->where('kamar.nomor_kamar', 'like', '%' . $this->q . '%')
-                    ->orWhere('kamar.tipe_kamar', 'like', '%' . $this->q . '%');
+                $w->where('kamar.nomor_kamar', 'like', '%'.$this->q.'%')
+                    ->orWhere('kamar.tipe_kamar', 'like', '%'.$this->q.'%');
             });
         }
 

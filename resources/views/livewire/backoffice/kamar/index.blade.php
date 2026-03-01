@@ -120,6 +120,7 @@
                      [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0
                      focus:outline-none focus:ring-2 focus:ring-[#854836]/30"
               wire:model.live="checkTo"
+              min="{{ $checkFrom }}"
             >
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
