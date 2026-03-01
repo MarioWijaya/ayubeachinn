@@ -4,6 +4,7 @@
   $oldCheckoutDate = \Illuminate\Support\Carbon::parse($booking->tanggal_check_out)->toDateString();
   $selectedKamarId = (int) old('kamar_id', $booking->kamar_id);
   $selectedKamar = collect($kamar)->firstWhere('id', $selectedKamarId);
+  $originalKamar = collect($kamar)->firstWhere('id', (int) $booking->kamar_id);
   $selectedTipeKamar = (string) ($selectedKamar->tipe_kamar ?? '');
   $isRoomLocked = $booking->status_booking === 'check_in';
   $tipeKamarOptions = collect($kamar)
@@ -21,6 +22,10 @@
   data-harga-per-malam="{{ (int) ($booking->harga_kamar ?? 0) }}"
   data-current-total="{{ (int) ($currentTotal ?? 0) }}"
   data-current-nights="{{ (int) ($currentNights ?? 0) }}"
+  data-original-room-id="{{ (int) $booking->kamar_id }}"
+  data-original-room-number="{{ (string) ($originalKamar->nomor_kamar ?? '-') }}"
+  data-original-layanan-id="{{ (string) ($selectedLayananId ?? '') }}"
+  data-original-layanan-qty="{{ (int) ($selectedQty ?? 0) }}"
   data-rooms-url="{{ route($routePrefix.'.booking.kamar_tersedia') }}"
   data-exclude-booking-id="{{ (int) $booking->id }}"
   data-room-locked="{{ $isRoomLocked ? '1' : '0' }}"
@@ -118,10 +123,19 @@
                      transition"
             >
               @if($isRoomLocked && $selectedKamar)
-                <option value="{{ $selectedKamar->id }}">{{ $selectedKamar->nomor_kamar }}</option>
+                <option
+                  value="{{ $selectedKamar->id }}"
+                  data-tarif="{{ (int) ($selectedKamar->tarif ?? $booking->harga_kamar ?? 0) }}"
+                >
+                  {{ $selectedKamar->nomor_kamar }}
+                </option>
               @else
                 @foreach($kamar as $k)
-                  <option value="{{ $k->id }}" {{ $selectedKamarId === (int) $k->id ? 'selected' : '' }}>
+                  <option
+                    value="{{ $k->id }}"
+                    data-tarif="{{ (int) ($k->tarif ?? 0) }}"
+                    {{ $selectedKamarId === (int) $k->id ? 'selected' : '' }}
+                  >
                     {{ $k->nomor_kamar }}
                   </option>
                 @endforeach
@@ -185,15 +199,15 @@
         </div>
 
         <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
+          <div class="min-w-0">
             <label class="block text-sm font-semibold text-slate-700">Check-in</label>
-            <div class="relative mt-2">
+            <div class="relative mt-2 min-w-0">
               <input
                 id="checkInDate"
                 name="tanggal_check_in"
                 type="text"
                 value="{{ old('tanggal_check_in', $booking->tanggal_check_in) }}"
-                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
+                class="min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
                        focus:outline-none focus:ring-2 focus:ring-[#854836]/25 focus:border-[#854836]
                        transition"
                 data-url-template="{{ route($routePrefix.'.booking.tanggal_terpakai', ['kamarId' => '__KAMAR__', 'exclude_booking_id' => $booking->id]) }}"
@@ -205,15 +219,15 @@
             @error('tanggal_check_in') <div class="mt-1 text-sm text-rose-600">{{ $message }}</div> @enderror
           </div>
 
-          <div>
+          <div class="min-w-0">
             <label class="block text-sm font-semibold text-slate-700">Check-out</label>
-            <div class="relative mt-2">
+            <div class="relative mt-2 min-w-0">
               <input
                 id="checkOutDate"
                 name="tanggal_check_out"
                 type="text"
                 value="{{ old('tanggal_check_out', $booking->tanggal_check_out) }}"
-                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
+                class="min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-sm
                        focus:outline-none focus:ring-2 focus:ring-[#854836]/25 focus:border-[#854836]
                        transition"
                 data-url-template="{{ route($routePrefix.'.booking.tanggal_terpakai', ['kamarId' => '__KAMAR__', 'exclude_booking_id' => $booking->id]) }}"
@@ -359,6 +373,8 @@
                   class="sr-only"
                   name="layanan_id"
                   value="{{ $l->id }}"
+                  data-layanan-name="{{ $l->nama }}"
+                  data-layanan-price="{{ (int) $l->harga }}"
                   {{ $isSelected ? 'checked' : '' }}
                 >
 
@@ -492,9 +508,11 @@
           <span class="text-slate-500">Biaya Tambahan</span>
           <span class="font-semibold text-slate-900" data-extend-extra>-</span>
         </div>
-        <div class="flex items-center justify-between border-t border-slate-200 pt-3">
-          <span class="text-slate-500">Total Baru</span>
-          <span class="font-semibold text-slate-900" data-extend-total>-</span>
+        <div class="mt-1 rounded-xl border border-[#854836]/25 bg-[#854836]/5 px-3 py-2.5">
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-xs font-semibold uppercase tracking-wide text-[#854836]">Total Baru</span>
+            <span class="text-xl font-extrabold text-[#854836] sm:text-2xl" data-extend-total>-</span>
+          </div>
         </div>
       </div>
 
@@ -503,6 +521,63 @@
           Batal
         </button>
         <button type="button" class="rounded-xl bg-[#854836] px-4 py-2 text-sm font-semibold text-white hover:opacity-95" data-extend-confirm>
+          Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {{-- MODAL KONFIRMASI TOTAL SAAT GANTI KAMAR + TAMBAH LAYANAN --}}
+  <div id="roomServicePreviewModal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+    <div class="absolute inset-0 bg-black/40" data-room-service-close></div>
+
+    <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <div class="text-sm font-semibold text-slate-900">Konfirmasi Total Booking Baru</div>
+          <div class="mt-1 text-xs text-slate-500">Periksa perubahan biaya sebelum simpan.</div>
+        </div>
+        <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-room-service-close>×</button>
+      </div>
+
+      <div class="mt-4 space-y-3 text-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Kamar Lama</span>
+          <span class="font-semibold text-slate-900" data-preview-old-room>-</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Kamar Baru</span>
+          <span class="font-semibold text-slate-900" data-preview-new-room>-</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Durasi Menginap</span>
+          <span class="font-semibold text-slate-900" data-preview-nights>0 malam</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Subtotal Kamar Baru</span>
+          <span class="font-semibold text-slate-900" data-preview-room-subtotal>-</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Layanan Tambahan</span>
+          <span class="font-semibold text-slate-900" data-preview-service-subtotal>-</span>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 pt-3">
+          <span class="text-slate-500">Total Saat Ini</span>
+          <span class="font-semibold text-slate-900" data-preview-current-total>-</span>
+        </div>
+        <div class="mt-1 rounded-xl border border-[#854836]/25 bg-[#854836]/5 px-3 py-2.5">
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-xs font-semibold uppercase tracking-wide text-[#854836]">Total Baru</span>
+            <span class="text-xl font-extrabold text-[#854836] sm:text-2xl" data-preview-new-total>-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex items-center justify-end gap-2">
+        <button type="button" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" data-room-service-close>
+          Batal
+        </button>
+        <button type="button" class="rounded-xl bg-[#854836] px-4 py-2 text-sm font-semibold text-white hover:opacity-95" data-room-service-confirm>
           Simpan
         </button>
       </div>
@@ -854,6 +929,7 @@
           const option = document.createElement('option');
           option.value = String(room.id);
           option.textContent = String(room.nomor_kamar);
+          option.dataset.tarif = String(parseInt(room.tarif || 0, 10) || 0);
           kamarSelect.appendChild(option);
         });
 
@@ -957,6 +1033,7 @@
           dateFormat: 'Y-m-d',
           minDate: computeMinDate(),
           disable: [],
+          disableMobile: true,
           allowInput: false,
           clickOpens: true,
           defaultDate: checkInInput.value || null,
@@ -993,6 +1070,7 @@
           dateFormat: 'Y-m-d',
           minDate: computeCheckOutMinDate(),
           disable: [],
+          disableMobile: true,
           allowInput: false,
           clickOpens: true,
           defaultDate: checkOutInput.value || null,
@@ -1116,9 +1194,13 @@
       renderLucideIcons();
 
       const form = root.querySelector('[data-booking-edit-form]');
-      const modal = document.getElementById('extendModal');
-      const closeButtons = modal?.querySelectorAll('[data-extend-close]') || [];
-      const confirmButton = modal?.querySelector('[data-extend-confirm]');
+      const extendModal = document.getElementById('extendModal');
+      const extendCloseButtons = extendModal?.querySelectorAll('[data-extend-close]') || [];
+      const extendConfirmButton = extendModal?.querySelector('[data-extend-confirm]');
+      const roomServiceModal = document.getElementById('roomServicePreviewModal');
+      const roomServiceCloseButtons = roomServiceModal?.querySelectorAll('[data-room-service-close]') || [];
+      const roomServiceConfirmButton = roomServiceModal?.querySelector('[data-room-service-confirm]');
+      const layananQtyInput = document.getElementById('layananQty');
 
       const formatCurrency = (value) =>
         new Intl.NumberFormat('id-ID', {
@@ -1147,11 +1229,70 @@
       };
 
       const oldCheckout = root.dataset.oldCheckout;
+      const originalRoomId = String(root.dataset.originalRoomId || '');
+      const originalRoomNumber = String(root.dataset.originalRoomNumber || '-');
+      const originalLayananId = String(root.dataset.originalLayananId || '');
+      const originalLayananQty = parseInt(root.dataset.originalLayananQty || '0', 10) || 0;
       const hargaPerMalam = Number(root.dataset.hargaPerMalam || 0);
       const currentTotal = Number(root.dataset.currentTotal || 0);
+      const currentNights = Number(root.dataset.currentNights || 0);
+
+      const getNights = () => {
+        const checkInDate = parseYmd(checkInInput.value);
+        const checkOutDate = parseYmd(checkOutInput.value);
+        if (!checkInDate || !checkOutDate) {
+          return Math.max(1, currentNights);
+        }
+
+        const diffMs = checkOutDate.getTime() - checkInDate.getTime();
+        return Math.max(1, Math.round(diffMs / 86400000));
+      };
+
+      const getSelectedRoomOption = () => kamarSelect?.selectedOptions?.[0] ?? null;
+
+      const getSelectedRoomRate = () => {
+        const selectedOption = getSelectedRoomOption();
+        const rate = parseInt(selectedOption?.dataset?.tarif || '', 10);
+        return Number.isNaN(rate) ? hargaPerMalam : rate;
+      };
+
+      const getSelectedRoomNumber = () => {
+        const selectedOption = getSelectedRoomOption();
+        return selectedOption?.textContent?.trim() || '-';
+      };
+
+      const getSelectedLayananInput = () => document.querySelector('input[name="layanan_id"]:checked');
+
+      const getSelectedLayananId = () => String(getSelectedLayananInput()?.value || '');
+
+      const getSelectedLayananName = () => {
+        const selectedInput = getSelectedLayananInput();
+        return String(selectedInput?.dataset?.layananName || 'Tanpa layanan');
+      };
+
+      const getSelectedLayananPrice = () => {
+        const selectedInput = getSelectedLayananInput();
+        const price = parseInt(selectedInput?.dataset?.layananPrice || '', 10);
+        return Number.isNaN(price) ? 0 : price;
+      };
+
+      const getSelectedLayananQty = () => {
+        const qty = parseInt(layananQtyInput?.value || '0', 10);
+        return Number.isNaN(qty) ? 0 : qty;
+      };
+
+      const shouldOpenRoomServicePreview = () => {
+        const selectedRoomId = String(kamarSelect.value || '');
+        const roomChanged = selectedRoomId !== '' && selectedRoomId !== originalRoomId;
+        const selectedLayananId = getSelectedLayananId();
+        const selectedQty = getSelectedLayananQty();
+        const layananChanged = selectedLayananId !== originalLayananId || selectedQty !== originalLayananQty;
+
+        return roomChanged || layananChanged;
+      };
 
       const openExtendModal = (newCheckout) => {
-        if (!modal) return;
+        if (!extendModal) return;
         const oldDate = parseYmd(oldCheckout);
         const newDate = parseYmd(newCheckout);
         if (!oldDate || !newDate) return;
@@ -1161,30 +1302,86 @@
         const extra = nights * hargaPerMalam;
         const total = currentTotal + extra;
 
-        modal.querySelector('[data-extend-old]').textContent = oldCheckout || '-';
-        modal.querySelector('[data-extend-new]').textContent = newCheckout || '-';
-        modal.querySelector('[data-extend-nights]').textContent = `${nights} malam`;
-        modal.querySelector('[data-extend-rate]').textContent = formatCurrency(hargaPerMalam);
-        modal.querySelector('[data-extend-extra]').textContent = formatCurrency(extra);
-        modal.querySelector('[data-extend-total]').textContent = formatCurrency(total);
+        extendModal.querySelector('[data-extend-old]').textContent = oldCheckout || '-';
+        extendModal.querySelector('[data-extend-new]').textContent = newCheckout || '-';
+        extendModal.querySelector('[data-extend-nights]').textContent = `${nights} malam`;
+        extendModal.querySelector('[data-extend-rate]').textContent = formatCurrency(hargaPerMalam);
+        extendModal.querySelector('[data-extend-extra]').textContent = formatCurrency(extra);
+        extendModal.querySelector('[data-extend-total]').textContent = formatCurrency(total);
 
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        extendModal.classList.remove('hidden');
+        extendModal.classList.add('flex');
       };
 
       const closeExtendModal = () => {
-        if (!modal) return;
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        if (!extendModal) return;
+        extendModal.classList.add('hidden');
+        extendModal.classList.remove('flex');
       };
 
-      closeButtons.forEach((btn) => btn.addEventListener('click', closeExtendModal));
-      confirmButton?.addEventListener('click', () => {
+      const openRoomServiceModal = () => {
+        if (!roomServiceModal) {
+          return false;
+        }
+
+        const nights = getNights();
+        if (nights <= 0) {
+          return false;
+        }
+
+        const roomRate = getSelectedRoomRate();
+        const roomSubtotal = nights * roomRate;
+        const layananName = getSelectedLayananName();
+        const layananPrice = getSelectedLayananPrice();
+        const layananQty = getSelectedLayananQty();
+        const layananSubtotal = layananPrice * layananQty;
+        const newTotal = roomSubtotal + layananSubtotal;
+        const layananLabel = getSelectedLayananId() !== ''
+          ? `${layananName} x${layananQty} (${formatCurrency(layananSubtotal)})`
+          : `Tanpa layanan (${formatCurrency(0)})`;
+
+        roomServiceModal.querySelector('[data-preview-old-room]').textContent = originalRoomNumber;
+        roomServiceModal.querySelector('[data-preview-new-room]').textContent = getSelectedRoomNumber();
+        roomServiceModal.querySelector('[data-preview-nights]').textContent = `${nights} malam`;
+        roomServiceModal.querySelector('[data-preview-room-subtotal]').textContent = formatCurrency(roomSubtotal);
+        roomServiceModal.querySelector('[data-preview-service-subtotal]').textContent = layananLabel;
+        roomServiceModal.querySelector('[data-preview-current-total]').textContent = formatCurrency(currentTotal);
+        roomServiceModal.querySelector('[data-preview-new-total]').textContent = formatCurrency(newTotal);
+
+        roomServiceModal.classList.remove('hidden');
+        roomServiceModal.classList.add('flex');
+
+        return true;
+      };
+
+      const closeRoomServiceModal = () => {
+        if (!roomServiceModal) {
+          return;
+        }
+
+        roomServiceModal.classList.add('hidden');
+        roomServiceModal.classList.remove('flex');
+      };
+
+      extendCloseButtons.forEach((btn) => btn.addEventListener('click', closeExtendModal));
+      extendConfirmButton?.addEventListener('click', () => {
         closeExtendModal();
+        form?.submit();
+      });
+      roomServiceCloseButtons.forEach((btn) => btn.addEventListener('click', closeRoomServiceModal));
+      roomServiceConfirmButton?.addEventListener('click', () => {
+        closeRoomServiceModal();
         form?.submit();
       });
 
       form?.addEventListener('submit', (event) => {
+        if (shouldOpenRoomServicePreview()) {
+          event.preventDefault();
+          if (openRoomServiceModal()) {
+            return;
+          }
+        }
+
         if (!oldCheckout || !checkOutInput.value) {
           return;
         }

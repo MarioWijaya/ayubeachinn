@@ -665,7 +665,7 @@ class BookingController extends Controller
                     ->where('booking.tanggal_check_out', '>', $validated['tanggal_check_in']);
             })
             ->orderBy('nomor_kamar')
-            ->get(['id', 'nomor_kamar', 'tipe_kamar']);
+            ->get(['id', 'nomor_kamar', 'tipe_kamar', 'tarif']);
 
         return response()->json(['rooms' => $kamar]);
     }

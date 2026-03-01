@@ -133,3 +133,39 @@ it('hides batal option on booking edit when status is check_in', function () {
         ->assertDontSee('value="batal"', false)
         ->assertSee('Kamar tidak dapat diubah ketika status booking sudah check-in.');
 });
+
+it('renders responsive check-in and check-out inputs on booking edit', function () {
+    $user = User::factory()->create([
+        'level' => 'pegawai',
+    ]);
+
+    $kamarId = DB::table('kamar')->insertGetId([
+        'nomor_kamar' => 'D-401',
+        'tipe_kamar' => 'Standard',
+        'tarif' => 220000,
+        'kapasitas' => 2,
+        'status_kamar' => 'tersedia',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $bookingId = DB::table('booking')->insertGetId([
+        'kamar_id' => $kamarId,
+        'pegawai_id' => $user->id,
+        'nama_tamu' => 'Tamu Responsive',
+        'tanggal_check_in' => now()->toDateString(),
+        'tanggal_check_out' => now()->addDay()->toDateString(),
+        'status_booking' => 'menunggu',
+        'catatan' => null,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('pegawai.booking.edit', $bookingId))
+        ->assertSuccessful()
+        ->assertSee('id="checkInDate"', false)
+        ->assertSee('id="checkOutDate"', false)
+        ->assertSee('min-w-0 max-w-full w-full rounded-xl border border-slate-300 bg-white', false)
+        ->assertSee('disableMobile: true', false);
+});

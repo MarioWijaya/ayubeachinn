@@ -78,6 +78,11 @@ it('returns only available rooms for selected date range on booking edit', funct
     ]));
 
     $response->assertSuccessful();
+    $response->assertJsonStructure([
+        'rooms' => [
+            ['id', 'nomor_kamar', 'tipe_kamar', 'tarif'],
+        ],
+    ]);
     $rooms = collect($response->json('rooms'))->pluck('id')->map(fn ($id) => (int) $id)->all();
 
     expect($rooms)->toContain($roomA, $roomC)->not->toContain($roomB);
