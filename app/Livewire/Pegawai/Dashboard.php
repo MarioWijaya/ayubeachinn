@@ -102,6 +102,8 @@ class Dashboard extends Component
     public function render(): View
     {
         $ongoingStatuses = ['menunggu', 'check_in'];
+        $checkFrom = $this->checkFrom;
+        $checkTo = $this->checkTo;
 
         $tipeList = DB::table('kamar')
             ->select('tipe_kamar', DB::raw('COUNT(*) as total'))
@@ -118,6 +120,19 @@ class Dashboard extends Component
             ->select('kamar.tipe_kamar', DB::raw('COUNT(DISTINCT booking.kamar_id) as terisi'))
             ->groupBy('kamar.tipe_kamar')
             ->pluck('terisi', 'tipe_kamar');
+
+        $perbaikanMap = DB::table('kamar')
+            ->join('kamar_perbaikan as kp', function ($join) use ($checkFrom, $checkTo) {
+                $join->on('kamar.id', '=', 'kp.kamar_id')
+                    ->whereDate('kp.mulai', '<=', $checkTo)
+                    ->where(function ($inner) use ($checkFrom) {
+                        $inner->whereNull('kp.selesai')
+                            ->orWhereDate('kp.selesai', '>=', $checkFrom);
+                    });
+            })
+            ->select('kamar.tipe_kamar', DB::raw('COUNT(DISTINCT kamar.id) as perbaikan'))
+            ->groupBy('kamar.tipe_kamar')
+            ->pluck('perbaikan', 'tipe_kamar');
 
         $kamarQ = DB::table('kamar')
             ->leftJoin('booking as b', function ($join) use ($ongoingStatuses) {
@@ -136,6 +151,17 @@ class Dashboard extends Component
                 'b.tanggal_check_out',
                 'b.status_booking',
             ])
+            ->selectSub(function ($sub) use ($checkFrom, $checkTo) {
+                $sub->from('kamar_perbaikan as kp')
+                    ->selectRaw('1')
+                    ->whereColumn('kp.kamar_id', 'kamar.id')
+                    ->whereDate('kp.mulai', '<=', $checkTo)
+                    ->where(function ($inner) use ($checkFrom) {
+                        $inner->whereNull('kp.selesai')
+                            ->orWhereDate('kp.selesai', '>=', $checkFrom);
+                    })
+                    ->limit(1);
+            }, 'is_perbaikan')
             ->groupBy(
                 'kamar.id',
                 'kamar.nomor_kamar',
@@ -159,11 +185,44 @@ class Dashboard extends Component
         }
 
         if ($this->statusKamar === 'tersedia') {
-            $kamarQ->whereNull('b.id');
+            $kamarQ->whereNull('b.id')
+                ->whereNotExists(function ($sub) use ($checkFrom, $checkTo) {
+                    $sub->selectRaw('1')
+                        ->from('kamar_perbaikan as kp')
+                        ->whereColumn('kp.kamar_id', 'kamar.id')
+                        ->whereDate('kp.mulai', '<=', $checkTo)
+                        ->where(function ($inner) use ($checkFrom) {
+                            $inner->whereNull('kp.selesai')
+                                ->orWhereDate('kp.selesai', '>=', $checkFrom);
+                        });
+                });
         }
 
         if ($this->statusKamar === 'terisi') {
-            $kamarQ->whereNotNull('b.id');
+            $kamarQ->whereNotNull('b.id')
+                ->whereNotExists(function ($sub) use ($checkFrom, $checkTo) {
+                    $sub->selectRaw('1')
+                        ->from('kamar_perbaikan as kp')
+                        ->whereColumn('kp.kamar_id', 'kamar.id')
+                        ->whereDate('kp.mulai', '<=', $checkTo)
+                        ->where(function ($inner) use ($checkFrom) {
+                            $inner->whereNull('kp.selesai')
+                                ->orWhereDate('kp.selesai', '>=', $checkFrom);
+                        });
+                });
+        }
+
+        if ($this->statusKamar === 'perbaikan') {
+            $kamarQ->whereExists(function ($sub) use ($checkFrom, $checkTo) {
+                $sub->selectRaw('1')
+                    ->from('kamar_perbaikan as kp')
+                    ->whereColumn('kp.kamar_id', 'kamar.id')
+                    ->whereDate('kp.mulai', '<=', $checkTo)
+                    ->where(function ($inner) use ($checkFrom) {
+                        $inner->whereNull('kp.selesai')
+                            ->orWhereDate('kp.selesai', '>=', $checkFrom);
+                    });
+            });
         }
 
         $kamarPage = $kamarQ
@@ -173,6 +232,7 @@ class Dashboard extends Component
         return view('livewire.pegawai.dashboard', compact(
             'tipeList',
             'terisiMap',
+            'perbaikanMap',
             'kamarPage'
         ));
     }

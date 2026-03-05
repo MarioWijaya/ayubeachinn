@@ -1,15 +1,17 @@
 <?php
-  $statusKamarOptions = ['tersedia', 'terisi'];
+  $statusKamarOptions = ['tersedia', 'terisi', 'perbaikan'];
 
   $statusKamarLabel = fn($s) => match ($s) {
     'tersedia' => 'Tersedia',
     'terisi' => 'Terisi',
+    'perbaikan' => 'Perbaikan',
     default => $s,
   };
 
   $badgeKamarClass = fn($s) => match ($s) {
     'tersedia' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
     'terisi' => 'bg-[#FFB22C]/15 text-[#9A5B00] border-[#FFB22C]/40',
+    'perbaikan' => 'bg-amber-50 text-amber-800 border-amber-200',
     default => 'bg-slate-50 text-slate-700 border-slate-200',
   };
 
@@ -24,6 +26,24 @@
       str_contains($key, 'superior') => 'bed-double',
       str_contains($key, 'standard') || str_contains($key, 'standart') => 'fan',
       default => 'bed',
+    };
+  };
+  $svgIcon = function (string $name, string $class = 'h-4 w-4'): string {
+    $attrs = 'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="'.e($class).'"';
+
+    return match ($name) {
+      'crown' => '<svg '.$attrs.'><path d="m3 8 4 4 5-7 5 7 4-4v10H3z"/><path d="M3 18h18"/></svg>',
+      'gem' => '<svg '.$attrs.'><path d="m6 3 6 8 6-8"/><path d="m3 9 9 12 9-12Z"/><path d="M12 21V11"/></svg>',
+      'users' => '<svg '.$attrs.'><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>',
+      'fan' => '<svg '.$attrs.'><circle cx="12" cy="12" r="2"/><path d="M12 4c2 0 3 1.5 2.5 3.1L13 11"/><path d="M20 12c0 2-1.5 3-3.1 2.5L13 13"/><path d="M12 20c-2 0-3-1.5-2.5-3.1L11 13"/><path d="M4 12c0-2 1.5-3 3.1-2.5L11 11"/></svg>',
+      'bed-double' => '<svg '.$attrs.'><path d="M2 10h20"/><path d="M2 18h20"/><path d="M4 10v8"/><path d="M20 10v8"/><rect x="6" y="12" width="5" height="4" rx="1"/><rect x="13" y="12" width="5" height="4" rx="1"/></svg>',
+      'bed' => '<svg '.$attrs.'><path d="M2 11h20"/><path d="M2 18h20"/><path d="M4 11v7"/><path d="M20 11v7"/><rect x="5" y="13" width="14" height="3" rx="1"/></svg>',
+      'search' => '<svg '.$attrs.'><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+      'rotate-ccw' => '<svg '.$attrs.'><path d="M3 2v6h6"/><path d="M3 8a9 9 0 1 0 2.6-6.4L3 4"/></svg>',
+      'chevron-right' => '<svg '.$attrs.'><path d="m9 6 6 6-6 6"/></svg>',
+      'chevron-down' => '<svg '.$attrs.'><path d="m6 9 6 6 6-6"/></svg>',
+      'calendar-days' => '<svg '.$attrs.'><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
+      default => '<svg '.$attrs.'><circle cx="12" cy="12" r="9"/></svg>',
     };
   };
   $fmtDash = fn($date) => $date ? \Illuminate\Support\Carbon::parse($date)->format('d-m-Y') : '-';
@@ -43,7 +63,8 @@
     <?php
       $terisi   = (int) ($terisiMap[$t->tipe_kamar] ?? 0);
       $total    = (int) ($t->total ?? 0);
-      $tersedia = max(0, $total - $terisi);
+      $perbaikan = (int) ($perbaikanMap[$t->tipe_kamar] ?? 0);
+      $tersedia = max(0, $total - $terisi - $perbaikan);
       $occPct   = $total > 0 ? (int) round(($terisi / $total) * 100) : 0;
 
       // status label & style (simple)
@@ -70,7 +91,7 @@ $barCls = $tersedia === 0
         <div class="min-w-0">
           <div class="flex items-center gap-2 text-xs font-semibold tracking-wide text-slate-500">
             <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
-              <i data-lucide="<?php echo e($iconByType($t->tipe_kamar)); ?>" class="h-4 w-4"></i>
+              <?php echo $svgIcon($iconByType($t->tipe_kamar), 'h-4 w-4'); ?>
             </span>
             <span class="truncate"><?php echo e($displayTipe($t->tipe_kamar)); ?></span>
           </div>
@@ -87,6 +108,7 @@ $barCls = $tersedia === 0
 
           <div class="mt-1 text-xs text-slate-500 whitespace-nowrap">
             Terisi <span class="font-semibold text-slate-700"><?php echo e($terisi); ?></span>
+            • Perbaikan <span class="font-semibold text-slate-700"><?php echo e($perbaikan); ?></span>
             dari <span class="font-semibold text-slate-700"><?php echo e($total); ?></span>
           </div>
         </div>
@@ -109,7 +131,7 @@ $barCls = $tersedia === 0
 
       <div class="mt-4 flex items-center justify-between text-sm font-semibold text-[#854836]">
         <span>Lihat kamar</span>
-        <i data-lucide="chevron-right" class="h-4 w-4 opacity-70 group-hover:opacity-100"></i>
+        <?php echo $svgIcon('chevron-right', 'h-4 w-4 opacity-70 group-hover:opacity-100'); ?>
       </div>
     </button>
   <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
@@ -121,7 +143,7 @@ $barCls = $tersedia === 0
       <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div class="relative min-w-0 w-full lg:max-w-xl">
           <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-            <i data-lucide="search" class="h-4 w-4"></i>
+            <?php echo $svgIcon('search', 'h-4 w-4'); ?>
           </span>
           <input
             type="text"
@@ -139,7 +161,7 @@ $barCls = $tersedia === 0
             class="w-full lg:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300
                    bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
           >
-            <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+            <?php echo $svgIcon('rotate-ccw', 'h-4 w-4'); ?>
             Reset
           </button>
         </div>
@@ -164,7 +186,7 @@ $barCls = $tersedia === 0
               <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
             </select>
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+              <?php echo $svgIcon('chevron-down', 'h-4 w-4'); ?>
             </span>
           </div>
         </div>
@@ -184,7 +206,7 @@ $barCls = $tersedia === 0
               <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
             </select>
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+              <?php echo $svgIcon('chevron-down', 'h-4 w-4'); ?>
             </span>
           </div>
         </div>
@@ -202,7 +224,7 @@ $barCls = $tersedia === 0
               wire:model.live="checkFrom"
             >
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+              <?php echo $svgIcon('calendar-days', 'h-4 w-4'); ?>
             </span>
           </div>
         </div>
@@ -221,7 +243,7 @@ $barCls = $tersedia === 0
               min="{{ $checkFrom }}"
             >
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <i data-lucide="calendar-days" class="h-4 w-4"></i>
+              <?php echo $svgIcon('calendar-days', 'h-4 w-4'); ?>
             </span>
           </div>
         </div>
@@ -246,7 +268,7 @@ $barCls = $tersedia === 0
     
     <div class="md:hidden divide-y divide-slate-200">
       <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $kamarPage; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
-        <?php $statusKamarValue = $k->is_terisi ? 'terisi' : 'tersedia'; ?>
+        <?php $statusKamarValue = ((int) ($k->is_perbaikan ?? 0) === 1) ? 'perbaikan' : ((int) ($k->is_terisi ?? 0) === 1 ? 'terisi' : 'tersedia'); ?>
 
         <div class="p-4">
           <div class="flex items-start justify-between gap-3">
@@ -268,10 +290,10 @@ $barCls = $tersedia === 0
           </div>
 
           <div class="mt-3 text-sm text-slate-700 space-y-1">
-            <div><span class="text-slate-500">Tamu:</span> <?php echo e($k->nama_tamu ?? '-'); ?></div>
+            <div><span class="text-slate-500">Tamu:</span> <?php echo e($statusKamarValue === 'perbaikan' ? '-' : ($k->nama_tamu ?? '-')); ?></div>
             <div>
               <span class="text-slate-500">Tanggal:</span>
-              <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($k->tanggal_check_in): ?>
+              <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($statusKamarValue !== 'perbaikan' && $k->tanggal_check_in): ?>
                 <?php echo e($fmtDash($k->tanggal_check_in)); ?> s/d <?php echo e($fmtDash($k->tanggal_check_out)); ?>
 
               <?php else: ?>
@@ -299,7 +321,7 @@ $barCls = $tersedia === 0
         </thead>
         <tbody class="divide-y divide-slate-200">
           <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $kamarPage; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
-            <?php $statusKamarValue = $k->is_terisi ? 'terisi' : 'tersedia'; ?>
+            <?php $statusKamarValue = ((int) ($k->is_perbaikan ?? 0) === 1) ? 'perbaikan' : ((int) ($k->is_terisi ?? 0) === 1 ? 'terisi' : 'tersedia'); ?>
 
             <tr class="hover:bg-[#854836]/[0.04]">
               <td class="px-4 py-3 font-semibold text-slate-900"><?php echo e($k->nomor_kamar); ?></td>
@@ -310,9 +332,9 @@ $barCls = $tersedia === 0
 
                 </span>
               </td>
-              <td class="px-4 py-3 text-slate-700"><?php echo e($k->nama_tamu ?? '-'); ?></td>
+              <td class="px-4 py-3 text-slate-700"><?php echo e($statusKamarValue === 'perbaikan' ? '-' : ($k->nama_tamu ?? '-')); ?></td>
               <td class="px-4 py-3 text-slate-700">
-                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($k->tanggal_check_in): ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($statusKamarValue !== 'perbaikan' && $k->tanggal_check_in): ?>
                   <?php echo e($fmtDash($k->tanggal_check_in)); ?> s/d <?php echo e($fmtDash($k->tanggal_check_out)); ?>
 
                 <?php else: ?>
@@ -338,20 +360,4 @@ $barCls = $tersedia === 0
   </div>
 </div>
 
-<?php $__env->startPush('scripts'); ?>
-  
-  <script>
-    document.addEventListener('livewire:navigated', () => {
-      if (window.lucide) window.lucide.createIcons();
-    });
-
-    document.addEventListener('livewire:initialized', () => {
-      if (window.Livewire) {
-        Livewire.hook('message.processed', () => {
-          if (window.lucide) window.lucide.createIcons();
-        });
-      }
-    });
-  </script>
-<?php $__env->stopPush(); ?>
 <?php /**PATH /Users/mario/Documents/projectweb/ayubeachinn_project/resources/views/livewire/pegawai/dashboard.blade.php ENDPATH**/ ?>
