@@ -122,13 +122,45 @@ class Index extends Component
         $toExclusive = Carbon::parse($to)->addDay()->toDateString();
 
         $query = Kamar::query()
-            ->leftJoin('kamar_perbaikan as kp', 'kp.kamar_id', '=', 'kamar.id')
             ->select([
                 'kamar.*',
-                'kp.mulai as perbaikan_mulai',
-                'kp.selesai as perbaikan_selesai',
-                'kp.catatan as perbaikan_catatan',
             ])
+            ->selectSub(function ($sub) use ($today) {
+                $sub->from('kamar_perbaikan as kpr')
+                    ->select('kpr.mulai')
+                    ->whereColumn('kpr.kamar_id', 'kamar.id')
+                    ->whereDate('kpr.mulai', '<=', $today)
+                    ->where(function ($inner) use ($today) {
+                        $inner->whereNull('kpr.selesai')
+                            ->orWhereDate('kpr.selesai', '>=', $today);
+                    })
+                    ->orderByDesc('kpr.mulai')
+                    ->limit(1);
+            }, 'perbaikan_mulai')
+            ->selectSub(function ($sub) use ($today) {
+                $sub->from('kamar_perbaikan as kpr')
+                    ->select('kpr.selesai')
+                    ->whereColumn('kpr.kamar_id', 'kamar.id')
+                    ->whereDate('kpr.mulai', '<=', $today)
+                    ->where(function ($inner) use ($today) {
+                        $inner->whereNull('kpr.selesai')
+                            ->orWhereDate('kpr.selesai', '>=', $today);
+                    })
+                    ->orderByDesc('kpr.mulai')
+                    ->limit(1);
+            }, 'perbaikan_selesai')
+            ->selectSub(function ($sub) use ($today) {
+                $sub->from('kamar_perbaikan as kpr')
+                    ->select('kpr.catatan')
+                    ->whereColumn('kpr.kamar_id', 'kamar.id')
+                    ->whereDate('kpr.mulai', '<=', $today)
+                    ->where(function ($inner) use ($today) {
+                        $inner->whereNull('kpr.selesai')
+                            ->orWhereDate('kpr.selesai', '>=', $today);
+                    })
+                    ->orderByDesc('kpr.mulai')
+                    ->limit(1);
+            }, 'perbaikan_catatan')
             ->selectSub(function ($sub) use ($today) {
                 $sub->from('kamar_perbaikan as kpr')
                     ->selectRaw('1')

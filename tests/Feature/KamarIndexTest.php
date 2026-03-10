@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 it('shows all kamar records on index', function () {
@@ -72,4 +73,41 @@ it('shows all kamar records on index', function () {
         ->assertSee('Perbaikan')
         ->assertSee('Terisi')
         ->assertSee('103');
+});
+
+it('does not show historical perbaikan detail for available room', function () {
+    Carbon::setTestNow(Carbon::create(2026, 3, 10, 10, 0, 0));
+
+    $user = User::factory()->create([
+        'level' => 'admin',
+        'status_aktif' => true,
+    ]);
+
+    $kamarId = DB::table('kamar')->insertGetId([
+        'nomor_kamar' => '201',
+        'tipe_kamar' => 'Standard Fan',
+        'tarif' => 150000,
+        'kapasitas' => 2,
+        'status_kamar' => 'tersedia',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    DB::table('kamar_perbaikan')->insert([
+        'kamar_id' => $kamarId,
+        'mulai' => now()->subDays(7)->toDateString(),
+        'selesai' => now()->subDays(6)->toDateString(),
+        'catatan' => 'Perbaikan AC lama',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('admin.kamar.index'))
+        ->assertOk()
+        ->assertSee('data-perbaikan-mulai="-"', false)
+        ->assertSee('data-perbaikan-selesai="-"', false)
+        ->assertDontSee('Perbaikan AC lama');
+
+    Carbon::setTestNow();
 });
