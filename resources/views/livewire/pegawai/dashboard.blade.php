@@ -108,7 +108,7 @@ $barCls = $tersedia === 0
 
           <div class="mt-1 text-xs text-slate-500 whitespace-nowrap">
             Terisi <span class="font-semibold text-slate-700"><?php echo e($terisi); ?></span>
-            • Perbaikan <span class="font-semibold text-slate-700"><?php echo e($perbaikan); ?></span>
+            / Perbaikan <span class="font-semibold text-slate-700"><?php echo e($perbaikan); ?></span>
             dari <span class="font-semibold text-slate-700"><?php echo e($total); ?></span>
           </div>
         </div>
