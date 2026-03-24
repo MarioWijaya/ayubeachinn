@@ -31,6 +31,14 @@
     'status' => $status,
   ]);
 
+  $actionQuery = array_filter([
+    'q' => $q,
+    'status' => $status,
+    'from' => $from,
+    'to' => $to,
+    'page' => request()->query('page'),
+  ], fn ($value) => is_string($value) && $value !== '');
+
   $quickToday = array_merge($quickBase, ['from' => $today, 'to' => $today]);
   $quickWeek = array_merge($quickBase, ['from' => $today, 'to' => $range7]);
   $quickMonth = array_merge($quickBase, ['from' => $today, 'to' => $range30]);
@@ -315,7 +323,7 @@
               </a>
             @endif
             @if($canCheckin)
-              <form method="POST" action="{{ route($routePrefix.'.booking.checkin', $b->id) }}">
+              <form method="POST" action="{{ route($routePrefix.'.booking.checkin', array_merge(['id' => $b->id], $actionQuery)) }}">
                 @csrf
                 <button
                   type="submit"
@@ -330,7 +338,7 @@
                 type="button"
                 class="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-700 hover:bg-sky-100 active:bg-sky-200"
                 onclick="window.openCheckoutModal(this)"
-                data-action="{{ route($routePrefix.'.booking.checkout', $b->id) }}"
+                data-action="{{ route($routePrefix.'.booking.checkout', array_merge(['id' => $b->id], $actionQuery)) }}"
                 data-nama="@js($b->nama_tamu)"
                 data-kamar="@js($b->nomor_kamar)"
                 data-checkin="@js($fmtDash($b->tanggal_check_in))"
@@ -344,7 +352,7 @@
               </button>
             @endif
             @if($canFinish)
-              <form method="POST" action="{{ route($routePrefix.'.booking.selesai', $b->id) }}">
+              <form method="POST" action="{{ route($routePrefix.'.booking.selesai', array_merge(['id' => $b->id], $actionQuery)) }}">
                 @csrf
                 <button
                   type="submit"
@@ -451,7 +459,7 @@
                     </a>
                   @endif
                   @if($canCheckin)
-                    <form method="POST" action="{{ route($routePrefix.'.booking.checkin', $b->id) }}" class="shrink-0">
+                    <form method="POST" action="{{ route($routePrefix.'.booking.checkin', array_merge(['id' => $b->id], $actionQuery)) }}" class="shrink-0">
                       @csrf
                       <button
                         type="submit"
@@ -466,7 +474,7 @@
                       type="button"
                       class="shrink-0 whitespace-nowrap rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-700 hover:bg-sky-100 active:bg-sky-200"
                       onclick="window.openCheckoutModal(this)"
-                      data-action="{{ route($routePrefix.'.booking.checkout', $b->id) }}"
+                      data-action="{{ route($routePrefix.'.booking.checkout', array_merge(['id' => $b->id], $actionQuery)) }}"
                       data-nama="@js($b->nama_tamu)"
                       data-kamar="@js($b->nomor_kamar)"
                       data-checkin="@js($fmtDash($b->tanggal_check_in))"
@@ -480,7 +488,7 @@
                     </button>
                   @endif
                   @if($canFinish)
-                    <form method="POST" action="{{ route($routePrefix.'.booking.selesai', $b->id) }}" class="shrink-0">
+                    <form method="POST" action="{{ route($routePrefix.'.booking.selesai', array_merge(['id' => $b->id], $actionQuery)) }}" class="shrink-0">
                       @csrf
                       <button
                         type="submit"

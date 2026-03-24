@@ -46,11 +46,16 @@ it('checks out a booking and stores totals as check_out before final completion'
         'updated_at' => now(),
     ]);
 
+    $filters = [
+        'from' => '2026-03-24',
+        'to' => '2026-03-24',
+    ];
+
     $this->actingAs($admin)
-        ->post(route('admin.booking.checkout', $bookingId), [
+        ->post(route('admin.booking.checkout', array_merge(['id' => $bookingId], $filters)), [
             'denda' => 10000,
         ])
-        ->assertRedirect(route('admin.booking.index'));
+        ->assertRedirect(route('admin.booking.index', $filters));
 
     $booking = DB::table('booking')->where('id', $bookingId)->first();
 
@@ -90,9 +95,14 @@ it('checks in a waiting booking from list action', function () {
         'updated_at' => now(),
     ]);
 
+    $filters = [
+        'from' => '2026-03-24',
+        'to' => '2026-03-24',
+    ];
+
     $this->actingAs($admin)
-        ->post(route('admin.booking.checkin', $bookingId))
-        ->assertRedirect(route('admin.booking.index'));
+        ->post(route('admin.booking.checkin', array_merge(['id' => $bookingId], $filters)))
+        ->assertRedirect(route('admin.booking.index', $filters));
 
     $booking = DB::table('booking')->where('id', $bookingId)->first();
     expect($booking->status_booking)->toBe('check_in');
@@ -124,9 +134,14 @@ it('marks check_out booking as selesai and releases room', function () {
         'updated_at' => now(),
     ]);
 
+    $filters = [
+        'from' => '2026-03-24',
+        'to' => '2026-03-24',
+    ];
+
     $this->actingAs($admin)
-        ->post(route('admin.booking.selesai', $bookingId))
-        ->assertRedirect(route('admin.booking.index'));
+        ->post(route('admin.booking.selesai', array_merge(['id' => $bookingId], $filters)))
+        ->assertRedirect(route('admin.booking.index', $filters));
 
     $booking = DB::table('booking')->where('id', $bookingId)->first();
     expect($booking->status_booking)->toBe('selesai');

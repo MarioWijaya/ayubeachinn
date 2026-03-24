@@ -820,10 +820,12 @@ class BookingController extends Controller
             ]);
         });
 
-        return redirect()->route($this->routePrefix().'.booking.index')->with('success', 'Checkout berhasil. Lanjutkan dengan konfirmasi Selesai.');
+        return redirect()
+            ->route($this->routePrefix().'.booking.index', $this->bookingIndexFilterQuery($request))
+            ->with('success', 'Checkout berhasil. Lanjutkan dengan konfirmasi Selesai.');
     }
 
-    public function checkin(int $id)
+    public function checkin(Request $request, int $id)
     {
         $booking = DB::table('booking')
             ->select('id', 'kamar_id', 'status_booking')
@@ -849,10 +851,12 @@ class BookingController extends Controller
             ]);
         });
 
-        return redirect()->route($this->routePrefix().'.booking.index')->with('success', 'Check-in berhasil. Silakan lanjutkan proses checkout saat tamu selesai menginap.');
+        return redirect()
+            ->route($this->routePrefix().'.booking.index', $this->bookingIndexFilterQuery($request))
+            ->with('success', 'Check-in berhasil. Silakan lanjutkan proses checkout saat tamu selesai menginap.');
     }
 
-    public function selesai(int $id)
+    public function selesai(Request $request, int $id)
     {
         $booking = DB::table('booking')
             ->select('id', 'kamar_id', 'status_booking')
@@ -878,6 +882,21 @@ class BookingController extends Controller
             ]);
         });
 
-        return redirect()->route($this->routePrefix().'.booking.index')->with('success', 'Booking ditandai selesai. Kamar siap dipakai kembali.');
+        return redirect()
+            ->route($this->routePrefix().'.booking.index', $this->bookingIndexFilterQuery($request))
+            ->with('success', 'Booking ditandai selesai. Kamar siap dipakai kembali.');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function bookingIndexFilterQuery(Request $request): array
+    {
+        $query = $request->only(['q', 'status', 'from', 'to', 'page']);
+
+        return array_filter(
+            $query,
+            fn ($value) => is_string($value) && $value !== ''
+        );
     }
 }
