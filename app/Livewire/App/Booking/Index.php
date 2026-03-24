@@ -34,7 +34,7 @@ class Index extends Component
     {
         if ($this->from === '' && $this->to === '') {
             $this->from = now()->toDateString();
-            $this->to = now()->addDays(29)->toDateString();
+            $this->to = now()->toDateString();
         }
 
         $this->ensureChronologicalRange();
@@ -67,7 +67,7 @@ class Index extends Component
         $this->q = '';
         $this->status = '';
         $this->from = now()->toDateString();
-        $this->to = now()->addDays(29)->toDateString();
+        $this->to = now()->toDateString();
         $this->resetPage();
     }
 

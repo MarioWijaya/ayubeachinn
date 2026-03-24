@@ -53,7 +53,7 @@
 
   <x-page-header
     title="Booking Kamar"
-    subtitle="Semua data booking dalam 30 hari terakhir (bisa diubah lewat filter tanggal)."
+    subtitle="Default menampilkan data booking hari ini (bisa diubah lewat filter tanggal)."
   >
     <x-slot:rightSlot>
       <a

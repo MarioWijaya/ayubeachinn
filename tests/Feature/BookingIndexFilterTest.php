@@ -210,12 +210,12 @@ it('prevents to date from being earlier than from date in booking filter', funct
     Carbon::setTestNow();
 });
 
-it('defaults booking filters to upcoming 30 days', function () {
+it('defaults booking filters to today range', function () {
     Carbon::setTestNow('2026-02-04');
 
     Livewire::test(PegawaiBookingIndex::class)
         ->assertSet('from', '2026-02-04')
-        ->assertSet('to', '2026-03-05');
+        ->assertSet('to', '2026-02-04');
 
     Carbon::setTestNow();
 });
