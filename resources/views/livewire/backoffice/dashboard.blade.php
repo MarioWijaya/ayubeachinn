@@ -414,6 +414,24 @@
 
     const formatStatus = (status) => statusLabels[status] ?? status.replace('_', ' ');
 
+    const statusDistributionLabels = {
+      menunggu: 'Menunggu',
+      check_in: 'Check in',
+      check_out: 'Check-out',
+      selesai: 'Selesai',
+      batal: 'Batal',
+    };
+
+    const formatDistributionStatus = (status) => {
+      if (statusDistributionLabels[status]) {
+        return statusDistributionLabels[status];
+      }
+
+      return status
+        .replaceAll('_', ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    };
+
     const renderBookings = (bookings) => {
       rowsContainer.innerHTML = '';
       cardsContainer.innerHTML = '';
@@ -503,7 +521,7 @@
         item.innerHTML = `
           <div class="flex items-center gap-2">
             <span class="inline-flex h-2.5 w-2.5 rounded-full" style="background-color:${color}"></span>
-            <span>${formatStatus(label)}</span>
+            <span>${formatDistributionStatus(label)}</span>
           </div>
           <span class="font-bold text-slate-900">${value}</span>
         `;

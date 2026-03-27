@@ -51,6 +51,7 @@ new class extends Component {
                 :label="__('Current password')"
                 type="password"
                 required
+                maxlength="25"
                 autocomplete="current-password"
             />
             <flux:input
@@ -58,6 +59,7 @@ new class extends Component {
                 :label="__('New password')"
                 type="password"
                 required
+                maxlength="25"
                 autocomplete="new-password"
             />
             <flux:input
@@ -65,6 +67,7 @@ new class extends Component {
                 :label="__('Confirm Password')"
                 type="password"
                 required
+                maxlength="25"
                 autocomplete="new-password"
             />
 

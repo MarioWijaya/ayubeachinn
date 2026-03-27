@@ -60,7 +60,7 @@
               <option value="Standard Fan" {{ old('tipe_kamar')=='Standard Fan' ? 'selected' : '' }}>Standard Fan</option>
               <option value="Superior" {{ old('tipe_kamar')=='Superior' ? 'selected' : '' }}>Superior</option>
               <option value="Deluxe" {{ old('tipe_kamar')=='Deluxe' ? 'selected' : '' }}>Deluxe</option>
-              <option value="Family Room" {{ old('tipe_kamar')=='Family Room' ? 'selected' : '' }}>Family Room</option>
+              <option value="FamilyRoom" {{ old('tipe_kamar')=='FamilyRoom' ? 'selected' : '' }}>FamilyRoom</option>
             </select>
             <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
               <i data-lucide="chevron-down" class="h-4 w-4"></i>

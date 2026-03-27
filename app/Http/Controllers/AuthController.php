@@ -16,36 +16,36 @@ class AuthController extends Controller
 
     public function prosesLogin(Request $request): RedirectResponse
     {
-    $request->validate([
-        'username' => ['required'],
-        'password' => ['required'],
-    ]);
+        $request->validate([
+            'username' => ['required'],
+            'password' => ['required', 'max:25'],
+        ]);
 
-    if (!Auth::attempt($request->only('username', 'password'))) {
-        return back()
-            ->withErrors(['username' => 'Username atau password salah.'])
-            ->onlyInput('username');
-    }
+        if (! Auth::attempt($request->only('username', 'password'))) {
+            return back()
+                ->withErrors(['username' => 'Username atau password salah.'])
+                ->onlyInput('username');
+        }
 
         // login sukses
         $request->session()->regenerate();
 
-    // ✅ cek status aktif dulu
-    if (!Auth::user()->status_aktif) {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // ✅ cek status aktif dulu
+        if (! Auth::user()->status_aktif) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        return back()->withErrors(['login' => 'Akun kamu nonaktif.']);
-    }
+            return back()->withErrors(['login' => 'Akun kamu nonaktif.']);
+        }
 
         $level = Auth::user()->level;
 
         return match ($level) {
-            'owner'   => redirect()->route('owner.dashboard'),
-            'admin'   => redirect()->route('admin.dashboard'),
+            'owner' => redirect()->route('owner.dashboard'),
+            'admin' => redirect()->route('admin.dashboard'),
             'pegawai' => redirect()->route('pegawai.dashboard'),
-            default   => $this->logoutTidakValid($request),
+            default => $this->logoutTidakValid($request),
         };
     }
 

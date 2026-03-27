@@ -27,7 +27,7 @@ class Edit extends Component
 
     public function render(): View
     {
-        $tipeKamar = ['Standard Fan', 'Superior', 'Deluxe', 'Family Room'];
+        $tipeKamar = ['Standard Fan', 'Superior', 'Deluxe', 'FamilyRoom'];
         $perbaikan = KamarPerbaikan::query()
             ->where('kamar_id', $this->kamar->id)
             ->first();

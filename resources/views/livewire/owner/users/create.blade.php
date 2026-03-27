@@ -75,9 +75,10 @@
           <input
             type="password"
             name="password"
+            maxlength="25"
             class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm
                    focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 focus:border-[#FFB22C] transition"
-            placeholder="Minimal 6 karakter"
+            placeholder="Minimal 6, maksimal 25 karakter"
             autocomplete="new-password"
           >
           <div class="mt-1 text-xs text-slate-500">Biarkan kuat (kombinasi huruf & angka).</div>

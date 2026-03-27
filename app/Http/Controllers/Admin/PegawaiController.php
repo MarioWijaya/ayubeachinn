@@ -12,6 +12,7 @@ class PegawaiController extends Controller
     public function index()
     {
         $pegawai = User::where('level', 'pegawai')->get();
+
         return view('admin.pegawai.index', compact('pegawai'));
     }
 
@@ -25,7 +26,7 @@ class PegawaiController extends Controller
         $request->validate([
             'nama' => 'required|string|max:100',
             'username' => 'required|string|max:50|unique:users,username',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|max:25',
         ]);
 
         User::create([
@@ -42,6 +43,7 @@ class PegawaiController extends Controller
     public function edit($id)
     {
         $pegawai = User::findOrFail($id);
+
         return view('admin.pegawai.edit', compact('pegawai'));
     }
 
@@ -51,8 +53,8 @@ class PegawaiController extends Controller
 
         $request->validate([
             'nama' => 'required|string|max:100',
-            'username' => 'required|string|max:50|unique:users,username,' . $pegawai->id,
-            'password' => 'nullable|string|min:6',
+            'username' => 'required|string|max:50|unique:users,username,'.$pegawai->id,
+            'password' => 'nullable|string|min:6|max:25',
             'status_aktif' => 'required|boolean',
         ]);
 
@@ -72,6 +74,7 @@ class PegawaiController extends Controller
     public function destroy($id)
     {
         User::where('id', $id)->delete();
+
         return redirect()->route('admin.pegawai.index')->with('success', 'Pegawai berhasil dihapus.');
     }
 }

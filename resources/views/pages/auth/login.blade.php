@@ -81,6 +81,7 @@
                 name="password"
                 type="password"
                 required
+                maxlength="25"
                 class="w-full text-sm border-b border-gray-300 focus:border-black pr-10 px-2 py-3 outline-none"
                 placeholder="Masukkan password"
               />

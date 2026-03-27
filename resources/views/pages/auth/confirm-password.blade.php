@@ -15,6 +15,7 @@
                 :label="__('Password')"
                 type="password"
                 required
+                maxlength="25"
                 autocomplete="current-password"
                 :placeholder="__('Password')"
                 viewable

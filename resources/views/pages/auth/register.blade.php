@@ -36,6 +36,7 @@
                 :label="__('Password')"
                 type="password"
                 required
+                maxlength="25"
                 autocomplete="new-password"
                 :placeholder="__('Password')"
                 viewable
@@ -47,6 +48,7 @@
                 :label="__('Confirm password')"
                 type="password"
                 required
+                maxlength="25"
                 autocomplete="new-password"
                 :placeholder="__('Confirm password')"
                 viewable

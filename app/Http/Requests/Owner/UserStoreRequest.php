@@ -16,7 +16,7 @@ class UserStoreRequest extends FormRequest
         return [
             'nama' => ['required', 'string', 'max:100'],
             'username' => ['required', 'string', 'max:50', 'unique:users,username'],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string', 'min:6', 'max:25'],
             'level' => ['required', 'in:admin,pegawai,owner'],
             'status_aktif' => ['required', 'boolean'],
         ];

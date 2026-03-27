@@ -65,6 +65,7 @@
             @php
               $selectedTipe = old('tipe_kamar', $kamar->tipe_kamar);
               $selectedTipe = $selectedTipe === 'Standart Fan' ? 'Standard Fan' : $selectedTipe;
+              $selectedTipe = $selectedTipe === 'Family Room' ? 'FamilyRoom' : $selectedTipe;
             @endphp
 
             <select

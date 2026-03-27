@@ -83,6 +83,7 @@
           <input
             type="password"
             name="password"
+            maxlength="25"
             class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm
                    focus:outline-none focus:ring-2 focus:ring-[#FFB22C]/30 focus:border-[#FFB22C] transition"
             placeholder="Kosongkan jika tidak ingin mengganti"

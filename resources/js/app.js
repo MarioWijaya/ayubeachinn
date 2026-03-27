@@ -428,6 +428,7 @@ const initScrollLock = () => {
         window.scrollTo({ top: window.__lwScrollY, behavior: "instant" });
       }
       scheduleLucideRefresh();
+      markRequiredInputLabels();
     });
   }
 
@@ -473,6 +474,49 @@ const initLivewireInputIconRefresh = () => {
   document.addEventListener("input", refreshFromEvent, true);
   document.addEventListener("change", refreshFromEvent, true);
   document.addEventListener("keyup", refreshFromEvent, true);
+};
+
+const resolveLabelTarget = (label) => {
+  const forAttr = label.getAttribute("for");
+  if (forAttr) {
+    return document.getElementById(forAttr);
+  }
+
+  const wrapper = label.parentElement;
+  if (!wrapper) {
+    return null;
+  }
+
+  return wrapper.querySelector("input, select, textarea");
+};
+
+const markRequiredInputLabels = () => {
+  document.querySelectorAll("form label").forEach((label) => {
+    if (
+      label.querySelector(".required-input-marker") ||
+      label.textContent?.toLowerCase().includes("(opsional)")
+    ) {
+      return;
+    }
+
+    const target = resolveLabelTarget(label);
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const isRequired =
+      target.hasAttribute("required") ||
+      target.getAttribute("aria-required") === "true";
+
+    if (!isRequired || target.getAttribute("type") === "hidden") {
+      return;
+    }
+
+    const marker = document.createElement("span");
+    marker.className = "required-input-marker";
+    marker.textContent = " *wajib diisi";
+    label.appendChild(marker);
+  });
 };
 
 // =================== REALTIME CLOCK ===================
@@ -523,6 +567,7 @@ const bootUi = () => {
   initCalendarResizeListener();
   initScrollLock();
   initLivewireInputIconRefresh();
+  markRequiredInputLabels();
   window.initRealtimeClock?.();
 };
 
@@ -530,6 +575,7 @@ const bootUi = () => {
 document.addEventListener("DOMContentLoaded", () => {
   scheduleLucideRefresh();
   updateCurrentLinks();
+  markRequiredInputLabels();
   setTimeout(updateCurrentLinks, 50);
   window.initRealtimeClock?.();
 });
