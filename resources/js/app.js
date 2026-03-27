@@ -518,8 +518,8 @@ const markRequiredInputLabels = () => {
 
     const marker = document.createElement("span");
     marker.className = "required-input-marker";
-    marker.textContent = "*wajib diisi";
-    label.prepend(marker);
+    marker.textContent = "(wajib diisi)";
+    label.append(marker);
   });
 };
 
