@@ -44,7 +44,7 @@
 
         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
-          <label class="block text-sm font-medium text-slate-700">Nama Tamu</label>
+          <label class="block text-sm font-medium text-slate-700" data-required-label="true">Nama Tamu</label>
           <input
             type="text"
             wire:model.defer="nama_tamu"
@@ -71,7 +71,7 @@
 
         {{-- TANGGAL --}}
         <div>
-          <label class="block text-sm font-medium text-slate-700">Tanggal Menginap</label>
+          <label class="block text-sm font-medium text-slate-700" data-required-label="true">Tanggal Menginap</label>
 
           <div wire:ignore class="relative mt-2">
             <input
@@ -106,7 +106,7 @@
 
         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
-          <label class="block text-sm font-medium text-slate-700">Tipe Kamar</label>
+          <label class="block text-sm font-medium text-slate-700" data-required-label="true">Tipe Kamar</label>
           <div class="relative mt-2" wire:ignore>
             <select
               id="selectTipeKamar"
@@ -129,7 +129,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700">Nomor Kamar</label>
+          <label class="block text-sm font-medium text-slate-700" data-required-label="true">Nomor Kamar</label>
           <div class="relative mt-2" wire:ignore>
             <select
               id="selectKamar"
@@ -165,7 +165,7 @@
         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         {{-- SUMBER BOOKING --}}
         <div>
-          <label class="block text-sm font-medium text-slate-700">Sumber Booking</label>
+          <label class="block text-sm font-medium text-slate-700" data-required-label="true">Sumber Booking</label>
           <div class="relative mt-2">
             <select
               wire:model.live="source_type"
@@ -191,7 +191,7 @@
 
           @if(in_array($source_type, ['ota', 'lainnya'], true))
             <div class="mt-3">
-              <label class="block text-sm font-medium text-slate-700">Detail Sumber</label>
+              <label class="block text-sm font-medium text-slate-700" data-required-label="true">Detail Sumber</label>
               <input
                 type="text"
                 wire:model.live="source_detail"
@@ -207,7 +207,7 @@
 
         {{-- HARGA KAMAR (dibayar tamu) --}}
         <div>
-          <label class="block text-sm font-medium text-slate-700">Harga Kamar (dibayar tamu)</label>
+          <label class="block text-sm font-medium text-slate-700" data-required-label="true">Harga Kamar (dibayar tamu)</label>
           <input
             type="number"
             min="0"
@@ -248,7 +248,7 @@
 
           {{-- QTY --}}
           <div class="w-full sm:min-w-[240px] sm:w-auto">
-            <label class="block text-sm font-semibold text-slate-700">Qty Extra Bed</label>
+            <label class="block text-sm font-semibold text-slate-700" data-required-label="true">Qty Extra Bed</label>
 
             <div class="mt-2 inline-flex w-full items-center overflow-hidden rounded-xl border border-slate-300 bg-white sm:w-auto">
               <button

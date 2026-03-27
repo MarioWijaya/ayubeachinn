@@ -499,23 +499,27 @@ const markRequiredInputLabels = () => {
       return;
     }
 
-    const target = resolveLabelTarget(label);
-    if (!(target instanceof HTMLElement)) {
-      return;
-    }
+    const forceRequired = label.dataset.requiredLabel === "true";
 
-    const isRequired =
-      target.hasAttribute("required") ||
-      target.getAttribute("aria-required") === "true";
+    if (!forceRequired) {
+      const target = resolveLabelTarget(label);
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
 
-    if (!isRequired || target.getAttribute("type") === "hidden") {
-      return;
+      const isRequired =
+        target.hasAttribute("required") ||
+        target.getAttribute("aria-required") === "true";
+
+      if (!isRequired || target.getAttribute("type") === "hidden") {
+        return;
+      }
     }
 
     const marker = document.createElement("span");
     marker.className = "required-input-marker";
-    marker.textContent = " *wajib diisi";
-    label.appendChild(marker);
+    marker.textContent = "*wajib diisi";
+    label.prepend(marker);
   });
 };
 
