@@ -406,7 +406,7 @@
 
     const statusLabels = {
       menunggu: 'menunggu',
-      check_in: 'check in',
+      check_in: 'check-in',
       check_out: 'check-out',
       selesai: 'selesai',
       batal: 'batal',
@@ -416,7 +416,7 @@
 
     const statusDistributionLabels = {
       menunggu: 'Menunggu',
-      check_in: 'Check in',
+      check_in: 'Check-in',
       check_out: 'Check-out',
       selesai: 'Selesai',
       batal: 'Batal',
